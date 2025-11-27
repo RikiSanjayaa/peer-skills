@@ -1,24 +1,21 @@
-@import 'tailwindcss';
-
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
-
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-}
-
 /* PeerSkill Custom Styles */
 :root {
-    --peerskill-primary: #00BCD4;
-    --peerskill-primary-dark: #00ACC1;
+    --peerskill-primary: #00bcd4;
+    --peerskill-primary-dark: #00acc1;
     --peerskill-secondary: #1a1a1a;
 }
 
-body {
-    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+/* Override Bootstrap primary color */
+.btn-primary {
+    background-color: var(--peerskill-primary) !important;
+    border-color: var(--peerskill-primary) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--peerskill-primary-dark) !important;
+    border-color: var(--peerskill-primary-dark) !important;
 }
 
 /* Smooth scrolling */
@@ -42,4 +39,32 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--peerskill-primary-dark);
+}
+
+/* Category card hover effects */
+.category-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Gig card styles */
+.gig-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gig-card:hover {
+    transform: translateY(-5px);
+}
+
+.gig-card img {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Navbar scroll effect */
+.navbar.scrolled {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
