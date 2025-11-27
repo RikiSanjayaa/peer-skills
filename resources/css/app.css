@@ -68,3 +68,27 @@ html {
 .navbar.scrolled {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* Active nav link */
+.nav-link.active {
+    font-weight: bold !important;
+}
+
+/* Profile Avatar */
+.profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
