@@ -17,6 +17,7 @@ class Seller extends Model
         'portfolio_url',
         'skills',
         'is_active',
+        'status',
     ];
 
     protected $casts = [

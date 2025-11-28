@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
 use App\Models\Gig;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
 
 Route::get('/', function () {
     $featuredGigs = Gig::with(['seller.user', 'category'])
@@ -62,6 +63,29 @@ Route::middleware('auth')->group(function () {
     Route::get('/seller/register', [SellerController::class, 'create'])->name('seller.register');
     Route::post('/seller/register', [SellerController::class, 'store']);
     Route::get('/dashboard/seller', [SellerController::class, 'dashboard'])->name('seller.dashboard');
+});
+
+
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    // Manage Categories (INI YANG BARU)
+    Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
+
+    // Manage Users
+    // Manage Users
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::patch('/users/{user}/promote', [App\Http\Controllers\Admin\UserController::class, 'promote'])->name('users.promote');
+    Route::patch('/users/{user}/demote', [App\Http\Controllers\Admin\UserController::class, 'demote'])->name('users.demote');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+
+    // MANAGE SELLER REQUESTS
+    Route::get('/seller-requests', [App\Http\Controllers\Admin\SellerRequestController::class, 'index'])->name('sellers.index');
+    Route::patch('/seller-requests/{id}/approve', [App\Http\Controllers\Admin\SellerRequestController::class, 'approve'])->name('sellers.approve');
+    Route::delete('/seller-requests/{id}/reject', [App\Http\Controllers\Admin\SellerRequestController::class, 'reject'])->name('sellers.reject');
 });
 
 require __DIR__ . '/auth.php';

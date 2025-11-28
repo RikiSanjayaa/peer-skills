@@ -19,6 +19,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 @auth
+                @if(Auth::check() && Auth::user()->role === 'admin')
+        <li class="nav-item">
+            <a class="nav-link text-danger fw-bold" href="{{ route('admin.dashboard') }}">
+                Admin Dashboard
+            </a>
+        </li>
+    @endif
                     <li class="nav-item">
                         <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Home</a>
                     </li>

@@ -17,9 +17,14 @@ class SellerController extends Controller
 
     public function create()
     {
-        // Redirect if already a seller
-        if (Auth::user()->is_seller) {
+        $user = Auth::user();
+
+        if ($user->is_seller) {
             return redirect()->route('seller.dashboard');
+        }
+
+        if ($user->seller && $user->seller->status === 'pending') {
+            return redirect('/')->with('info', 'Aplikasi Seller Anda sedang ditinjau oleh Admin.');
         }
 
         $skills = Skill::where('is_active', true)->orderBy('category')->orderBy('name')->get();
@@ -28,9 +33,14 @@ class SellerController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::user();
         // Redirect if already a seller
         if (Auth::user()->is_seller) {
             return redirect()->route('seller.dashboard');
+        }
+        
+        if ($user->seller) {
+            return redirect('/')->with('error', 'Anda sudah memiliki pendaftaran Seller yang sedang diproses atau aktif.');
         }
 
         $validated = $request->validate([
@@ -52,17 +62,18 @@ class SellerController extends Controller
             'university' => $validated['university'],
             'portfolio_url' => $validated['portfolio_url'] ?? null,
             'skills' => $validated['skills'],
-            'is_active' => true,
+            // riki, saya tambahin status pending buat verifikasi seller oleh admin
+            'is_active' => false,
+            'status' => 'pending',
         ]);
 
         // Update user to be a seller
         /** @var User $user */
         $user = Auth::user();
-        $user->is_seller = true;
-        $user->save();
+        // $user->is_seller = true;
+        // $user->save();
 
-        return redirect()->route('seller.dashboard')->with('success', 'Congratulations! you are now a seller.');
-    }
+return redirect('/')->with('success', 'Permintaan menjadi Seller berhasil dikirim! Mohon tunggu persetujuan Admin.');    }
 
     public function dashboard()
     {
