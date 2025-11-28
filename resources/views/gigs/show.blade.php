@@ -106,16 +106,23 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="mb-3">About the Seller</h5>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="profile-avatar me-3"
-                                style="background-color: var(--peerskill-primary); width: 50px; height: 50px; font-size: 18px;">
-                                {{ strtoupper(substr($gig->seller->user->name, 0, 1)) }}
+                        <a href="{{ route('profile.show', $gig->seller->user) }}" class="text-decoration-none">
+                            <div class="d-flex align-items-center mb-3">
+                                @if ($gig->seller->user->avatar)
+                                    <img src="{{ $gig->seller->user->avatar_url }}" alt="{{ $gig->seller->user->name }}"
+                                        class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                @else
+                                    <div class="profile-avatar me-3"
+                                        style="background-color: var(--peerskill-primary); width: 50px; height: 50px; font-size: 18px;">
+                                        {{ strtoupper(substr($gig->seller->user->name, 0, 1)) }}
+                                    </div>
+                                @endif
+                                <div>
+                                    <h6 class="mb-0 text-dark">{{ $gig->seller->business_name }}</h6>
+                                    <small class="text-muted">{{ $gig->seller->user->name }}</small>
+                                </div>
                             </div>
-                            <div>
-                                <h6 class="mb-0">{{ $gig->seller->business_name }}</h6>
-                                <small class="text-muted">{{ $gig->seller->user->name }}</small>
-                            </div>
-                        </div>
+                        </a>
                         <p class="text-muted mb-2">{{ $gig->seller->description }}</p>
                         <div class="row text-muted small">
                             <div class="col-6">
@@ -128,6 +135,12 @@
                                         target="_blank">View</a>
                                 @endif
                             </div>
+                        </div>
+                        <div class="mt-3">
+                            <a href="{{ route('profile.show', $gig->seller->user) }}"
+                                class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-person"></i> View Profile
+                            </a>
                         </div>
                     </div>
                 </div>

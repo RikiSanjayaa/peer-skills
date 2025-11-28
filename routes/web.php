@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GigController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
 use App\Models\Gig;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,16 @@ Route::get('/', function () {
 // Gig routes
 Route::resource('gigs', GigController::class);
 Route::get('/gigs-search-suggestions', [GigController::class, 'searchSuggestions'])->name('gigs.search.suggestions');
+
+// Profile routes
+Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profile/avatar', [ProfileController::class, 'removeAvatar'])->name('profile.avatar.remove');
+    Route::delete('/profile/banner', [ProfileController::class, 'removeBanner'])->name('profile.banner.remove');
+});
 
 // Seller routes
 Route::middleware('auth')->group(function () {

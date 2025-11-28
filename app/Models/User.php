@@ -24,6 +24,11 @@ class User extends Authenticatable
         'password',
         'is_seller',
         'role',
+        'avatar',
+        'banner',
+        'phone',
+        'bio',
+        'social_links',
     ];
 
     /**
@@ -47,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_seller' => 'boolean',
+            'social_links' => 'array',
         ];
     }
 
@@ -58,5 +64,40 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Get the avatar URL or default placeholder
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+        return '';
+    }
+
+    /**
+     * Get the banner URL or null
+     */
+    public function getBannerUrlAttribute(): ?string
+    {
+        if ($this->banner) {
+            return asset('storage/' . $this->banner);
+        }
+        return null;
+    }
+
+    /**
+     * Get user initials for avatar placeholder
+     */
+    public function getInitialsAttribute(): string
+    {
+        $words = explode(' ', $this->name);
+        $initials = '';
+        foreach (array_slice($words, 0, 2) as $word) {
+            $initials .= strtoupper(substr($word, 0, 1));
+        }
+        return $initials;
     }
 }
