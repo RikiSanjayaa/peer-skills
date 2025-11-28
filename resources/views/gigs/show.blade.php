@@ -153,10 +153,10 @@
                         <div class="mb-3">
                             <h4 class="mb-2">
                                 @if ($gig->max_price)
-                                    ${{ number_format($gig->min_price, 2) }} -
-                                    ${{ number_format($gig->max_price, 2) }}
+                                    Rp {{ number_format($gig->min_price, 0, ',', '.') }} -
+                                    Rp {{ number_format($gig->max_price, 0, ',', '.') }}
                                 @else
-                                    ${{ number_format($gig->min_price, 2) }}
+                                    Rp {{ number_format($gig->min_price, 0, ',', '.') }}
                                 @endif
                             </h4>
                             <small class="text-muted">
@@ -192,13 +192,14 @@
                                     This is your gig. Buyers will see the order button here.
                                 </div>
                             @else
-                                <button class="btn btn-primary w-100 mb-2" disabled>
-                                    Order Now (Coming Soon)
-                                </button>
+                                <a href="{{ route('orders.create', $gig) }}" class="btn btn-primary w-100 mb-2">
+                                    <i class="bi bi-cart-plus me-1"></i> Order Now
+                                </a>
                                 @if ($gig->allows_tutoring)
-                                    <button class="btn btn-outline-primary w-100" disabled>
-                                        Book Tutoring (Coming Soon)
-                                    </button>
+                                    <a href="{{ route('orders.create', $gig) }}?type=tutoring"
+                                        class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-mortarboard me-1"></i> Book Tutoring
+                                    </a>
                                 @endif
                             @endif
                         @else

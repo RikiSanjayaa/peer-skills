@@ -141,36 +141,32 @@
                                             <p class="card-text text-muted small">
                                                 {{ Str::limit($gig->description, 100) }}</p>
                                         </div>
-                                        <div class="card-footer bg-white border-top">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <a href="{{ route('profile.show', $gig->seller->user) }}"
-                                                    class="d-flex align-items-center text-decoration-none"
-                                                    onclick="event.stopPropagation();">
-                                                    @if ($gig->seller->user->avatar)
-                                                        <img src="{{ $gig->seller->user->avatar_url }}"
-                                                            alt="{{ $gig->seller->user->name }}"
-                                                            class="rounded-circle me-2"
-                                                            style="width: 30px; height: 30px; object-fit: cover;">
-                                                    @else
-                                                        <div class="profile-avatar me-2"
-                                                            style="background-color: var(--peerskill-primary); width: 30px; height: 30px; font-size: 12px;">
-                                                            {{ strtoupper(substr($gig->seller->user->name, 0, 1)) }}
-                                                        </div>
-                                                    @endif
-                                                    <small class="text-muted">{{ $gig->seller->business_name }}</small>
-                                                </a>
-                                                <div>
-                                                    <strong class="text-primary">
-                                                        @if ($gig->max_price)
-                                                            ${{ number_format($gig->min_price, 0) }}+
-                                                        @else
-                                                            ${{ number_format($gig->min_price, 0) }}
-                                                        @endif
-                                                    </strong>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </a>
+                                    <div class="card-footer bg-white border-top">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="{{ route('profile.show', $gig->seller->user) }}"
+                                                class="d-flex align-items-center text-decoration-none">
+                                                @if ($gig->seller->user->avatar)
+                                                    <img src="{{ $gig->seller->user->avatar_url }}"
+                                                        alt="{{ $gig->seller->user->name }}" class="rounded-circle me-2"
+                                                        style="width: 30px; height: 30px; object-fit: cover;">
+                                                @else
+                                                    <div class="profile-avatar me-2"
+                                                        style="background-color: var(--peerskill-primary); width: 30px; height: 30px; font-size: 12px;">
+                                                        {{ strtoupper(substr($gig->seller->user->name, 0, 1)) }}
+                                                    </div>
+                                                @endif
+                                                <small class="text-muted">{{ $gig->seller->business_name }}</small>
+                                            </a>
+                                            <strong class="text-primary">
+                                                @if ($gig->max_price)
+                                                    Rp {{ number_format($gig->min_price, 0, ',', '.') }}+
+                                                @else
+                                                    Rp {{ number_format($gig->min_price, 0, ',', '.') }}
+                                                @endif
+                                            </strong>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach

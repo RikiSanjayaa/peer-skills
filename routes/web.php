@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GigController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
 use App\Models\Gig;
@@ -14,6 +15,33 @@ Route::get('/', function () {
 
     return view('welcome', compact('featuredGigs'));
 })->name('home');
+
+// Order routes (must be before gig resource to avoid route conflicts)
+Route::middleware('auth')->group(function () {
+    // Order listing
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+    // Create order for a gig
+    Route::get('/gigs/{gig}/order', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/gigs/{gig}/order', [OrderController::class, 'store'])->name('orders.store');
+
+    // Order details
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Seller actions
+    Route::post('/orders/{order}/quote', [OrderController::class, 'quote'])->name('orders.quote');
+    Route::post('/orders/{order}/deliver', [OrderController::class, 'deliver'])->name('orders.deliver');
+    Route::post('/orders/{order}/complete-tutoring', [OrderController::class, 'completeTutoring'])->name('orders.complete-tutoring');
+
+    // Buyer actions
+    Route::post('/orders/{order}/accept', [OrderController::class, 'acceptQuote'])->name('orders.accept');
+    Route::post('/orders/{order}/decline', [OrderController::class, 'declineQuote'])->name('orders.decline');
+    Route::post('/orders/{order}/revision', [OrderController::class, 'requestRevision'])->name('orders.revision');
+    Route::post('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
+
+    // Both can do
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+});
 
 // Gig routes
 Route::resource('gigs', GigController::class);

@@ -66,13 +66,37 @@ class SellerController extends Controller
 
     public function dashboard()
     {
-        if (!Auth::user()->is_seller) {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (!$user->is_seller) {
             return redirect()->route('home');
         }
 
-        $seller = Auth::user()->seller;
+        $seller = $user->seller;
         $gigs = $seller->gigs()->with('category')->latest()->get();
 
-        return view('seller.dashboard', compact('seller', 'gigs'));
+        // Order statistics
+        $pendingOrders = $user->sellerOrders()->whereIn('status', ['pending', 'quoted'])->count();
+        $activeOrders = $user->sellerOrders()->whereIn('status', ['accepted', 'delivered', 'revision_requested'])->count();
+        $completedOrders = $user->sellerOrders()->where('status', 'completed')->count();
+        $totalEarnings = $user->sellerOrders()->where('status', 'completed')->sum('price');
+
+        // Recent orders for quick view
+        $recentOrders = $user->sellerOrders()
+            ->with(['buyer', 'gig'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('seller.dashboard', compact(
+            'seller',
+            'gigs',
+            'pendingOrders',
+            'activeOrders',
+            'completedOrders',
+            'totalEarnings',
+            'recentOrders'
+        ));
     }
 }

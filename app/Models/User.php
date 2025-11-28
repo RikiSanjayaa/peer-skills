@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -99,5 +100,37 @@ class User extends Authenticatable
             $initials .= strtoupper(substr($word, 0, 1));
         }
         return $initials;
+    }
+
+    /**
+     * Orders where user is the buyer
+     */
+    public function buyerOrders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'buyer_id');
+    }
+
+    /**
+     * Orders where user is the seller
+     */
+    public function sellerOrders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'seller_id');
+    }
+
+    /**
+     * Get count of completed orders as buyer
+     */
+    public function getCompletedBuyerOrdersCountAttribute(): int
+    {
+        return $this->buyerOrders()->where('status', 'completed')->count();
+    }
+
+    /**
+     * Get count of completed orders as seller
+     */
+    public function getCompletedSellerOrdersCountAttribute(): int
+    {
+        return $this->sellerOrders()->where('status', 'completed')->count();
     }
 }

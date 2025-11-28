@@ -172,9 +172,9 @@
                                                 </small>
                                                 <strong class="text-primary">
                                                     @if ($gig->max_price)
-                                                        ${{ number_format($gig->min_price, 0) }}+
+                                                        Rp {{ number_format($gig->min_price, 0, ',', '.') }}+
                                                     @else
-                                                        ${{ number_format($gig->min_price, 0) }}
+                                                        Rp {{ number_format($gig->min_price, 0, ',', '.') }}
                                                     @endif
                                                 </strong>
                                             </div>

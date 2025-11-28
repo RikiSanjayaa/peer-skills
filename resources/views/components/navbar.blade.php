@@ -53,6 +53,11 @@
                                 </a>
                             </li>
                             <li>
+                                <a class="dropdown-item" href="{{ route('orders.index') }}">
+                                    <i class="bi bi-bag me-2"></i>My Orders
+                                </a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                     <i class="bi bi-gear me-2"></i>Edit Profile
                                 </a>
