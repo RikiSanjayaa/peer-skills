@@ -71,6 +71,8 @@ class SellerController extends Controller
         }
 
         $seller = Auth::user()->seller;
-        return view('seller.dashboard', compact('seller'));
+        $gigs = $seller->gigs()->with('category')->latest()->get();
+
+        return view('seller.dashboard', compact('seller', 'gigs'));
     }
 }

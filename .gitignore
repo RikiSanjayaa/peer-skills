@@ -15,7 +15,11 @@
 /node_modules
 /public/build
 /public/hot
-/public/storage
+/public/storage/*
+!/public/storage/.gitignore
+!/public/storage/gigs/images/07umt8kDA5UcfgTA7QUUtf2u4cLlsYcUaptdw3Q4.jpg
+!/public/storage/gigs/images/christopher-gower-m_HRfLhgABo-unsplash.jpg
+!/public/storage/gigs/images/michal-parzuchowski-Nh4Sxasye24-unsplash.jpg
 /storage/*.key
 /storage/pail
 /vendor

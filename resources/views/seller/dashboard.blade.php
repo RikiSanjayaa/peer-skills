@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Dashboard - PeerSkill</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+@section('title', 'Seller Dashboard - PeerSkill')
 
-<body>
-    @include('components.navbar')
-
+@section('content')
     <div class="container py-5">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -33,7 +24,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title text-muted">Active Gigs</h5>
-                        <h2 class="mb-0">0</h2>
+                        <h2 class="mb-0">{{ $gigs->count() }}</h2>
                     </div>
                 </div>
             </div>
@@ -123,36 +114,87 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary" disabled>Create New Gig</button>
-                            <button class="btn btn-outline-secondary" disabled>View Orders</button>
-                            <button class="btn btn-outline-secondary" disabled>Messages</button>
-                            <button class="btn btn-outline-secondary" disabled>Analytics</button>
+                            <a href="{{ route('gigs.create') }}" class="btn btn-primary">Create New Gig</a>
+                            <a href="{{ route('gigs.index') }}" class="btn btn-outline-secondary">Browse All
+                                Gigs</a>
+                            <button class="btn btn-outline-secondary" disabled>View Orders (Coming Soon)</button>
                         </div>
-                        <hr class="my-3">
-                        <small class="text-muted">These features are coming soon!</small>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Recent Activity -->
+        <!-- My Gigs -->
         <div class="row">
             <div class="col">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Recent Activity</h5>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">My Gigs</h5>
+                        <a href="{{ route('gigs.create') }}" class="btn btn-sm btn-primary">Create Gig</a>
                     </div>
                     <div class="card-body">
-                        <p class="text-muted text-center py-4">No recent activity to display.</p>
+                        @if ($gigs->count() > 0)
+                            <div class="row g-3">
+                                @foreach ($gigs as $gig)
+                                    <div class="col-md-4">
+                                        <div class="card h-100">
+                                            <a href="{{ route('gigs.show', $gig) }}"
+                                                class="text-decoration-none text-dark">
+                                                @if ($gig->images && count($gig->images) > 0)
+                                                    <img src="{{ asset('storage/' . $gig->images[0]) }}"
+                                                        class="card-img-top" alt="{{ $gig->title }}"
+                                                        style="height: 150px; object-fit: cover;">
+                                                @else
+                                                    <div class="card-img-top d-flex align-items-center justify-content-center text-white"
+                                                        style="height: 150px; background: linear-gradient(135deg, var(--peerskill-primary), var(--peerskill-primary-dark));">
+                                                        <h6 class="text-center px-2">
+                                                            {{ Str::limit($gig->title, 30) }}
+                                                        </h6>
+                                                    </div>
+                                                @endif
+                                                <div class="card-body">
+                                                    <span class="badge bg-primary mb-2">{{ $gig->category->name }}</span>
+                                                    <h6 class="card-title">{{ Str::limit($gig->title, 40) }}</h6>
+                                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                                        <strong class="text-primary">
+                                                            @if ($gig->max_price)
+                                                                ${{ number_format($gig->min_price, 0) }}+
+                                                            @else
+                                                                ${{ number_format($gig->min_price, 0) }}
+                                                            @endif
+                                                        </strong>
+                                                        <small class="text-muted">{{ $gig->delivery_days }}d
+                                                            delivery</small>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <div class="card-footer bg-white border-top">
+                                                <div class="d-flex gap-2">
+                                                    <a href="{{ route('gigs.edit', $gig) }}"
+                                                        class="btn btn-sm btn-outline-primary flex-fill">Edit</a>
+                                                    <form method="POST" action="{{ route('gigs.destroy', $gig) }}"
+                                                        class="flex-fill" onsubmit="return confirm('Delete this gig?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger w-100">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-muted text-center py-4">
+                                You haven't created any gigs yet. <a href="{{ route('gigs.create') }}">Create your
+                                    first gig</a> to start selling!
+                            </p>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    @include('components.footer')
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+    </div>
+@endsection

@@ -1,152 +1,72 @@
-<section class="featured-gigs-section py-5">
+<section class="py-5 bg-light">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <h2>Featured Services</h2>
-            <a href="#" class="text-decoration-none">View All <i class="bi bi-arrow-right"></i></a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>Featured Services</h2>
+                <p class="text-muted">Discover popular gigs from talented sellers</p>
+            </div>
+            <a href="{{ route('gigs.index') }}" class="btn btn-outline-primary">Browse All</a>
         </div>
-        
-        <div class="row g-4">
-            <!-- Gig Card 1 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card gig-card border-0 shadow-sm h-100 hover-lift">
-                    <div class="position-relative">
-                        <img src="https://via.placeholder.com/350x200/00BCD4/ffffff?text=Logo+Design" class="card-img-top" alt="Service">
-                        <span class="badge bg-warning position-absolute top-0 end-0 m-2">
-                            <i class="bi bi-star-fill"></i> Featured
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Seller">
-                            <div>
-                                <h6 class="mb-0 small">John Doe</h6>
-                                <small class="text-muted">Level 2 Seller</small>
-                            </div>
+
+        @if ($featuredGigs->count() > 0)
+            <div class="row g-4">
+                @foreach ($featuredGigs as $gig)
+                    <div class="col-md-4">
+                        <div class="card gig-card h-100">
+                            <a href="{{ route('gigs.show', $gig) }}" class="text-decoration-none text-dark">
+                                @if ($gig->images && count($gig->images) > 0)
+                                    <img src="{{ asset('storage/' . $gig->images[0]) }}" class="card-img-top"
+                                        alt="{{ $gig->title }}" style="height: 200px; object-fit: cover;">
+                                @else
+                                    <div class="card-img-top d-flex align-items-center justify-content-center text-white"
+                                        style="height: 200px; background: linear-gradient(135deg, var(--peerskill-primary), var(--peerskill-primary-dark));">
+                                        <h5 class="text-center px-3">{{ $gig->title }}</h5>
+                                    </div>
+                                @endif
+                                <div class="card-body">
+                                    <span class="badge bg-primary mb-2">{{ $gig->category->name }}</span>
+                                    <h5 class="card-title">{{ Str::limit($gig->title, 50) }}</h5>
+                                    <p class="card-text text-muted small">{{ Str::limit($gig->description, 100) }}</p>
+                                </div>
+                                <div class="card-footer bg-white border-top">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <div class="profile-avatar me-2"
+                                                style="background-color: var(--peerskill-primary); width: 30px; height: 30px; font-size: 12px;">
+                                                {{ strtoupper(substr($gig->seller->user->name, 0, 1)) }}
+                                            </div>
+                                            <small class="text-muted">{{ $gig->seller->business_name }}</small>
+                                        </div>
+                                        <div>
+                                            <strong class="text-primary">
+                                                @if ($gig->max_price)
+                                                    ${{ number_format($gig->min_price, 0) }}+
+                                                @else
+                                                    ${{ number_format($gig->min_price, 0) }}
+                                                @endif
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                        <h6 class="card-title mt-2">I will create a modern logo design for your brand</h6>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="text-warning">
-                                <i class="bi bi-star-fill"></i> 5.0
-                            </span>
-                            <span class="text-muted small ms-1">(234)</span>
-                        </div>
                     </div>
-                    <div class="card-footer bg-white border-0 pt-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-heart"></i></small>
-                            <div>
-                                <span class="text-muted small">Starting at</span>
-                                <strong class="text-dark"> $50</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
-            
-            <!-- Gig Card 2 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card gig-card border-0 shadow-sm h-100 hover-lift">
-                    <div class="position-relative">
-                        <img src="https://via.placeholder.com/350x200/00ACC1/ffffff?text=Web+Development" class="card-img-top" alt="Service">
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Seller">
-                            <div>
-                                <h6 class="mb-0 small">Sarah Smith</h6>
-                                <small class="text-muted">Top Rated</small>
-                            </div>
-                        </div>
-                        <h6 class="card-title mt-2">I will develop a responsive website using Laravel</h6>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="text-warning">
-                                <i class="bi bi-star-fill"></i> 4.9
-                            </span>
-                            <span class="text-muted small ms-1">(187)</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white border-0 pt-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-heart"></i></small>
-                            <div>
-                                <span class="text-muted small">Starting at</span>
-                                <strong class="text-dark"> $200</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        @else
+            <div class="text-center py-5">
+                <h4 class="text-muted">No gigs available yet</h4>
+                <p class="text-muted">Be the first to create a gig and start offering your services!</p>
+                @auth
+                    @if (Auth::user()->is_seller)
+                        <a href="{{ route('gigs.create') }}" class="btn btn-primary mt-3">Create Your First Gig</a>
+                    @else
+                        <a href="{{ route('seller.register') }}" class="btn btn-primary mt-3">Become a Seller</a>
+                    @endif
+                @else
+                    <a href="{{ route('register') }}" class="btn btn-primary mt-3">Get Started</a>
+                @endauth
             </div>
-            
-            <!-- Gig Card 3 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card gig-card border-0 shadow-sm h-100 hover-lift">
-                    <div class="position-relative">
-                        <img src="https://via.placeholder.com/350x200/00BCD4/ffffff?text=Video+Editing" class="card-img-top" alt="Service">
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Seller">
-                            <div>
-                                <h6 class="mb-0 small">Mike Johnson</h6>
-                                <small class="text-muted">Level 1 Seller</small>
-                            </div>
-                        </div>
-                        <h6 class="card-title mt-2">I will edit your video professionally with effects</h6>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="text-warning">
-                                <i class="bi bi-star-fill"></i> 4.8
-                            </span>
-                            <span class="text-muted small ms-1">(152)</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white border-0 pt-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-heart"></i></small>
-                            <div>
-                                <span class="text-muted small">Starting at</span>
-                                <strong class="text-dark"> $75</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Gig Card 4 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card gig-card border-0 shadow-sm h-100 hover-lift">
-                    <div class="position-relative">
-                        <img src="https://via.placeholder.com/350x200/00ACC1/ffffff?text=SEO+Services" class="card-img-top" alt="Service">
-                        <span class="badge bg-warning position-absolute top-0 end-0 m-2">
-                            <i class="bi bi-star-fill"></i> Featured
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Seller">
-                            <div>
-                                <h6 class="mb-0 small">Emma Wilson</h6>
-                                <small class="text-muted">Top Rated</small>
-                            </div>
-                        </div>
-                        <h6 class="card-title mt-2">I will boost your website SEO ranking to page 1</h6>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="text-warning">
-                                <i class="bi bi-star-fill"></i> 5.0
-                            </span>
-                            <span class="text-muted small ms-1">(312)</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white border-0 pt-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-heart"></i></small>
-                            <div>
-                                <span class="text-muted small">Starting at</span>
-                                <strong class="text-dark"> $120</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endif
     </div>
 </section>
