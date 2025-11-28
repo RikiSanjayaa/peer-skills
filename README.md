@@ -1,59 +1,154 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PeerSkill
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform marketplace freelance peer-to-peer yang menghubungkan mahasiswa untuk menawarkan dan membeli jasa (gig). Dibangun sebagai proyek tugas kuliah dengan pendekatan MVP (Minimum Viable Product) yang siap dikembangkan menjadi produk nyata.
 
-## About Laravel
+## Tentang Proyek
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+PeerSkill adalah platform di mana mahasiswa dapat menjadi seller untuk menawarkan keahlian mereka (desain, programming, penulisan, dll) atau menjadi buyer untuk memesan jasa dari seller lain. Fitur unik yang membedakan dari platform serupa adalah opsi **tutoring** di mana seller dapat menawarkan sesi bimbingan langsung selain pengerjaan gig standar.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Teknologi yang Digunakan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Kategori       | Teknologi                       |
+| -------------- | ------------------------------- |
+| Backend        | Laravel 12, PHP 8.2+            |
+| Frontend       | Blade, Bootstrap 5.3, Alpine.js |
+| Database       | SQLite (development)            |
+| Build Tool     | Vite                            |
+| Authentication | Laravel Breeze                  |
 
-## Learning Laravel
+## Instalasi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+# Clone repository
+git clone https://github.com/RikiSanjayaa/peer-skills.git
+cd peer-skills
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Install dependencies
+composer install
+npm install
 
-## Laravel Sponsors
+# Setup environment
+cp .env.example .env
+php artisan key:generate
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Buat file database SQLite
+touch database/database.sqlite
 
-### Premium Partners
+# Jalankan migrasi dan seeder
+php artisan migrate --seed
+php artisan storage:link
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Build assets dan jalankan server
+npm run build
+php artisan serve
+```
 
-## Contributing
+Akses aplikasi di `http://localhost:8000`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Akun Demo:**
 
-## Code of Conduct
+-   Buyer: `buyer@example.com` / `password`
+-   Seller: `seller@example.com` / `password`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Struktur Direktori
 
-## Security Vulnerabilities
+```
+app/
+├── Http/Controllers/
+│   ├── GigController.php      # CRUD gig dan pencarian
+│   ├── OrderController.php    # Alur order lengkap
+│   ├── ProfileController.php  # Profil pengguna
+│   └── SellerController.php   # Registrasi dan dashboard seller
+├── Models/
+│   ├── User.php               # Pengguna (buyer/seller)
+│   ├── Seller.php             # Profil seller
+│   ├── Gig.php                # Layanan yang ditawarkan
+│   ├── Category.php           # Kategori gig
+│   ├── Order.php              # Pesanan dengan status workflow
+│   ├── OrderDelivery.php      # File hasil pengerjaan
+│   └── TutoringSchedule.php   # Jadwal sesi tutoring
+database/
+├── migrations/                # Skema database
+└── seeders/                   # Data dummy untuk testing
+resources/views/
+├── layouts/                   # Template utama
+├── gigs/                      # Halaman gig (index, show, create, edit)
+├── orders/                    # Halaman order (index, show, create)
+├── seller/                    # Dashboard dan registrasi seller
+└── profile/                   # Halaman profil
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Alur Penggunaan
 
-## License
+### Registrasi dan Peran
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. User mendaftar melalui halaman register
+2. Secara default, user adalah **buyer** yang dapat memesan gig
+3. Buyer dapat mendaftar menjadi **seller** untuk menawarkan jasa
+4. Satu akun dapat berperan sebagai buyer sekaligus seller
+
+### Alur Order
+
+Sistem order menggunakan mekanisme **penawaran harga** di mana seller mengajukan harga setelah melihat kebutuhan buyer:
+
+```
+[BUYER]                              [SELLER]
+   |                                    |
+   |-- 1. Buat pesanan (requirements) ->|
+   |                                    |
+   |<- 2. Ajukan penawaran (harga) -----|
+   |                                    |
+   |-- 3a. Terima penawaran ----------->|
+   |   atau                             |
+   |-- 3b. Tolak penawaran ------------>|
+   |                                    |
+   |<- 4. Kirim hasil (delivery) -------|
+   |                                    |
+   |-- 5a. Selesaikan pesanan --------->|
+   |   atau                             |
+   |-- 5b. Minta revisi --------------->|
+   |                                    |
+   |<- 6. Kirim ulang hasil ------------|
+   |                                    |
+   |-- 7. Selesaikan pesanan ---------->|
+```
+
+### Status Order
+
+| Status               | Deskripsi                          |
+| -------------------- | ---------------------------------- |
+| `pending`            | Menunggu penawaran dari seller     |
+| `quoted`             | Seller telah mengajukan penawaran  |
+| `accepted`           | Buyer menerima, seller mengerjakan |
+| `delivered`          | Seller mengirim hasil              |
+| `revision_requested` | Buyer meminta revisi               |
+| `completed`          | Pesanan selesai                    |
+| `declined`           | Buyer menolak penawaran            |
+| `cancelled`          | Pesanan dibatalkan                 |
+
+### Fitur Tutoring (Opsional)
+
+Untuk gig yang mengaktifkan opsi tutoring:
+
+1. Buyer memilih tipe "Tutoring" saat memesan
+2. Buyer mengajukan beberapa slot waktu
+3. Seller mengkonfirmasi waktu dan mengirim link meeting
+4. Setelah sesi selesai, seller menandai sebagai delivered
+
+## Fitur Utama
+
+-   **Pencarian dan Filter Gig** - Cari berdasarkan kata kunci, kategori, harga, waktu pengerjaan
+-   **Live Search Suggestions** - Saran pencarian dengan preview gig
+-   **Profil Seller** - Business name, keahlian, portfolio, universitas
+-   **Dashboard Seller** - Statistik order, pendapatan, gig aktif
+-   **Upload File** - Gambar gig, avatar, banner profil, file delivery
+-   **Sistem Penawaran** - Negosiasi harga berdasarkan kebutuhan buyer
+
+## Pengembangan Selanjutnya
+
+Fitur yang direncanakan untuk pengembangan lanjutan:
+
+-   Integrasi payment gateway
+-   Real-time messaging antara buyer dan seller
+-   Sistem rating dan review
+-   Notifikasi email dan push notification
