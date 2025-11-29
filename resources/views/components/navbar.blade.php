@@ -19,26 +19,29 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 @auth
-                @if(Auth::check() && Auth::user()->role === 'admin')
-        <li class="nav-item">
-            <a class="nav-link text-danger fw-bold" href="{{ route('admin.dashboard') }}">
-                Admin Dashboard
-            </a>
-        </li>
-    @endif
+                    @if (Auth::check() && Auth::user()->role === 'admin')
+                        <li class="nav-item">
+                            <a class="nav-link {{ $currentRoute === 'admin.dashboard' ? 'active' : '' }}"
+                                href="{{ route('admin.dashboard') }}">
+                                Admin Dashboard
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Home</a>
                     </li>
-                    @if (Auth::user()->is_seller)
-                        <li class="nav-item">
-                            <a class="nav-link {{ $currentRoute === 'seller.dashboard' ? 'active' : '' }}"
-                                href="{{ route('seller.dashboard') }}">Seller Dashboard</a>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <a class="nav-link {{ $currentRoute === 'seller.register' ? 'active' : '' }}"
-                                href="{{ route('seller.register') }}">Become a Seller</a>
-                        </li>
+                    @if (Auth::user()->role !== 'admin')
+                        @if (Auth::user()->is_seller)
+                            <li class="nav-item">
+                                <a class="nav-link {{ $currentRoute === 'seller.dashboard' ? 'active' : '' }}"
+                                    href="{{ route('seller.dashboard') }}">Seller Dashboard</a>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link {{ $currentRoute === 'seller.register' ? 'active' : '' }}"
+                                    href="{{ route('seller.register') }}">Become a Seller</a>
+                            </li>
+                        @endif
                     @endif
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
@@ -59,11 +62,13 @@
                                     <i class="bi bi-person me-2"></i>My Profile
                                 </a>
                             </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('orders.index') }}">
-                                    <i class="bi bi-bag me-2"></i>My Orders
-                                </a>
-                            </li>
+                            @if (Auth::user()->role !== 'admin')
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('orders.index') }}">
+                                        <i class="bi bi-bag me-2"></i>My Orders
+                                    </a>
+                                </li>
+                            @endif
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                     <i class="bi bi-gear me-2"></i>Edit Profile

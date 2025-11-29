@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @php
     $avatarColors = ['#00bcd4', '#0097a7', '#00838f', '#006064', '#0288d1', '#039be5'];
@@ -7,7 +7,7 @@
 @endphp
 
 @section('content')
-    <div class="py-5 bg-light">
+    <div class="py-4">
         <div class="container">
             {{-- Header --}}
             <div class="mb-4">

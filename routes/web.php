@@ -17,8 +17,8 @@ Route::get('/', function () {
     return view('welcome', compact('featuredGigs'));
 })->name('home');
 
-// Order routes (must be before gig resource to avoid route conflicts)
-Route::middleware('auth')->group(function () {
+// Order routes - BLOCKED FOR ADMIN
+Route::middleware(['auth', 'no-admin'])->group(function () {
     // Order listing
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
@@ -44,9 +44,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 });
 
-// Gig routes
-Route::resource('gigs', GigController::class);
+// Gig routes - Public viewing, but create/edit/delete BLOCKED FOR ADMIN
+Route::get('/gigs', [GigController::class, 'index'])->name('gigs.index');
+Route::get('/gigs/{gig}', [GigController::class, 'show'])->name('gigs.show');
 Route::get('/gigs-search-suggestions', [GigController::class, 'searchSuggestions'])->name('gigs.search.suggestions');
+
+Route::middleware(['auth', 'no-admin'])->group(function () {
+    Route::get('/gigs/create', [GigController::class, 'create'])->name('gigs.create');
+    Route::post('/gigs', [GigController::class, 'store'])->name('gigs.store');
+    Route::get('/gigs/{gig}/edit', [GigController::class, 'edit'])->name('gigs.edit');
+    Route::put('/gigs/{gig}', [GigController::class, 'update'])->name('gigs.update');
+    Route::patch('/gigs/{gig}', [GigController::class, 'update']);
+    Route::delete('/gigs/{gig}', [GigController::class, 'destroy'])->name('gigs.destroy');
+});
 
 // Profile routes
 Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
@@ -58,8 +68,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile/banner', [ProfileController::class, 'removeBanner'])->name('profile.banner.remove');
 });
 
-// Seller routes
-Route::middleware('auth')->group(function () {
+// Seller routes - BLOCKED FOR ADMIN
+Route::middleware(['auth', 'no-admin'])->group(function () {
     Route::get('/seller/register', [SellerController::class, 'create'])->name('seller.register');
     Route::post('/seller/register', [SellerController::class, 'store']);
     Route::get('/seller/status', [SellerController::class, 'status'])->name('seller.status');
@@ -73,14 +83,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
-    // Manage Categories (INI YANG BARU)
+    // Manage Categories
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
 
-    // Manage Users
-    // Manage Users
+    // Manage Users (WITHOUT promote/demote - admin only via seeder)
     Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-    Route::patch('/users/{user}/promote', [App\Http\Controllers\Admin\UserController::class, 'promote'])->name('users.promote');
-    Route::patch('/users/{user}/demote', [App\Http\Controllers\Admin\UserController::class, 'demote'])->name('users.demote');
     Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
 
     // MANAGE SELLER REQUESTS
