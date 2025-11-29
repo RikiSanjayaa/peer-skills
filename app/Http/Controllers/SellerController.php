@@ -23,28 +23,70 @@ class SellerController extends Controller
             return redirect()->route('seller.dashboard');
         }
 
+        // Cek apakah ada pengajuan yang ditolak
+        $rejectedSeller = Seller::where('user_id', $user->id)
+            ->where('status', Seller::STATUS_REJECTED)
+            ->latest()
+            ->first();
+
+        if ($rejectedSeller) {
+            // Tampilkan halaman dengan info penolakan
+            $skills = Skill::where('is_active', true)->orderBy('category')->orderBy('name')->get();
+            return view('seller.register', [
+                'skills' => $skills,
+                'rejectedSeller' => $rejectedSeller,
+                'isResubmit' => true,
+            ]);
+        }
+
         if ($user->seller && $user->seller->status === 'pending') {
-            return redirect('/')->with('info', 'Aplikasi Seller Anda sedang ditinjau oleh Admin.');
+            return redirect()->route('seller.status');
         }
 
         $skills = Skill::where('is_active', true)->orderBy('category')->orderBy('name')->get();
         return view('seller.register', compact('skills'));
     }
 
+    /**
+     * Tampilkan status pengajuan seller
+     */
+    public function status()
+    {
+        $user = Auth::user();
+
+        if ($user->is_seller) {
+            return redirect()->route('seller.dashboard');
+        }
+
+        $seller = Seller::where('user_id', $user->id)->latest()->first();
+
+        if (!$seller) {
+            return redirect()->route('seller.register');
+        }
+
+        return view('seller.status', compact('seller'));
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
+
         // Redirect if already a seller
-        if (Auth::user()->is_seller) {
+        if ($user->is_seller) {
             return redirect()->route('seller.dashboard');
         }
-        
-        if ($user->seller) {
-            return redirect('/')->with('error', 'Anda sudah memiliki pendaftaran Seller yang sedang diproses atau aktif.');
+
+        // Cek apakah ada pengajuan pending
+        $pendingSeller = Seller::where('user_id', $user->id)
+            ->where('status', Seller::STATUS_PENDING)
+            ->first();
+
+        if ($pendingSeller) {
+            return redirect()->route('seller.status')->with('info', 'Anda sudah memiliki pengajuan yang sedang diproses.');
         }
 
         $validated = $request->validate([
-            'business_name' => 'required|string|max:255|unique:sellers,business_name',
+            'business_name' => 'required|string|max:255|unique:sellers,business_name,' . ($request->resubmit_id ?? 'NULL'),
             'description' => 'required|string|max:1000',
             'major' => 'required|string|max:255',
             'university' => 'required|string|max:255',
@@ -53,7 +95,15 @@ class SellerController extends Controller
             'skills.*' => 'required|string|max:255',
         ]);
 
-        // Create seller profile
+        // Jika ini adalah resubmit, hapus pengajuan lama yang ditolak
+        if ($request->resubmit_id) {
+            Seller::where('id', $request->resubmit_id)
+                ->where('user_id', $user->id)
+                ->where('status', Seller::STATUS_REJECTED)
+                ->delete();
+        }
+
+        // Create new seller profile
         Seller::create([
             'user_id' => Auth::id(),
             'business_name' => $validated['business_name'],
@@ -62,18 +112,12 @@ class SellerController extends Controller
             'university' => $validated['university'],
             'portfolio_url' => $validated['portfolio_url'] ?? null,
             'skills' => $validated['skills'],
-            // riki, saya tambahin status pending buat verifikasi seller oleh admin
             'is_active' => false,
-            'status' => 'pending',
+            'status' => Seller::STATUS_PENDING,
         ]);
 
-        // Update user to be a seller
-        /** @var User $user */
-        $user = Auth::user();
-        // $user->is_seller = true;
-        // $user->save();
-
-return redirect('/')->with('success', 'Permintaan menjadi Seller berhasil dikirim! Mohon tunggu persetujuan Admin.');    }
+        return redirect()->route('seller.status')->with('success', 'Pengajuan berhasil dikirim! Mohon tunggu proses verifikasi.');
+    }
 
     public function dashboard()
     {

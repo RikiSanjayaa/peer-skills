@@ -62,13 +62,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/seller/register', [SellerController::class, 'create'])->name('seller.register');
     Route::post('/seller/register', [SellerController::class, 'store']);
+    Route::get('/seller/status', [SellerController::class, 'status'])->name('seller.status');
     Route::get('/dashboard/seller', [SellerController::class, 'dashboard'])->name('seller.dashboard');
 });
 
 
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     // Dashboard
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
@@ -84,8 +85,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // MANAGE SELLER REQUESTS
     Route::get('/seller-requests', [App\Http\Controllers\Admin\SellerRequestController::class, 'index'])->name('sellers.index');
+    Route::get('/seller-requests/{id}', [App\Http\Controllers\Admin\SellerRequestController::class, 'show'])->name('sellers.show');
     Route::patch('/seller-requests/{id}/approve', [App\Http\Controllers\Admin\SellerRequestController::class, 'approve'])->name('sellers.approve');
-    Route::delete('/seller-requests/{id}/reject', [App\Http\Controllers\Admin\SellerRequestController::class, 'reject'])->name('sellers.reject');
+    Route::post('/seller-requests/{id}/reject', [App\Http\Controllers\Admin\SellerRequestController::class, 'reject'])->name('sellers.reject');
+    Route::post('/seller-requests/{id}/suspend', [App\Http\Controllers\Admin\SellerRequestController::class, 'suspend'])->name('sellers.suspend');
+    Route::patch('/seller-requests/{id}/reactivate', [App\Http\Controllers\Admin\SellerRequestController::class, 'reactivate'])->name('sellers.reactivate');
 });
 
 require __DIR__ . '/auth.php';
