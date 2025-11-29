@@ -1,26 +1,65 @@
 @extends('layouts.app')
 
-@section('title', 'Become a Seller - PeerSkill')
+@section('title', isset($isResubmit) ? 'Ajukan Ulang Seller - PeerSkill' : 'Become a Seller - PeerSkill')
 
 @section('content')
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
+                {{-- Rejection Alert for Resubmit --}}
+                @if (isset($isResubmit) && isset($rejectedSeller))
+                    <div class="alert alert-danger border-danger mb-4">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-exclamation-triangle-fill fs-4 me-3 text-danger"></i>
+                            <div class="flex-grow-1">
+                                <h5 class="alert-heading fw-bold mb-2">Pengajuan Sebelumnya Ditolak</h5>
+                                <p class="mb-2">{{ $rejectedSeller->rejection_reason }}</p>
+                                <small class="text-muted">
+                                    Ditolak pada {{ $rejectedSeller->rejected_at?->format('d M Y, H:i') ?? '-' }}
+                                </small>
+                                <hr class="my-3">
+                                <p class="mb-0 small">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Silakan perbaiki data pengajuan Anda berdasarkan alasan penolakan di atas dan ajukan
+                                    kembali.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="card shadow-sm">
                     <div class="card-body p-5">
-                        <h2 class="mb-4">Become a Seller</h2>
-                        <p class="text-muted mb-4">Start your freelancing journey on PeerSkill. Fill out the form below
-                            to create your seller profile.</p>
+                        <h2 class="mb-4">
+                            @if (isset($isResubmit))
+                                <i class="bi bi-arrow-repeat me-2"></i>Ajukan Ulang Seller
+                            @else
+                                Become a Seller
+                            @endif
+                        </h2>
+                        <p class="text-muted mb-4">
+                            @if (isset($isResubmit))
+                                Perbaiki data pengajuan Anda dan kirim ulang untuk direview.
+                            @else
+                                Start your freelancing journey on PeerSkill. Fill out the form below to create your seller
+                                profile.
+                            @endif
+                        </p>
 
                         <form method="POST" action="{{ route('seller.register') }}">
                             @csrf
+
+                            @if (isset($isResubmit) && isset($rejectedSeller))
+                                <input type="hidden" name="resubmit_id" value="{{ $rejectedSeller->id }}">
+                            @endif
 
                             <!-- Business Name -->
                             <div class="mb-3">
                                 <label for="business_name" class="form-label">Business Name <span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('business_name') is-invalid @enderror"
-                                    id="business_name" name="business_name" value="{{ old('business_name') }}" required>
+                                    id="business_name" name="business_name"
+                                    value="{{ old('business_name', $rejectedSeller->business_name ?? '') }}" required>
                                 @error('business_name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -31,7 +70,7 @@
                                 <label for="description" class="form-label">Description <span
                                         class="text-danger">*</span></label>
                                 <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
-                                    rows="4" maxlength="1000" required>{{ old('description') }}</textarea>
+                                    rows="4" maxlength="1000" required>{{ old('description', $rejectedSeller->description ?? '') }}</textarea>
                                 <div class="form-text">Describe your expertise and what services you offer (max 1000
                                     characters)</div>
                                 @error('description')
@@ -44,7 +83,8 @@
                                 <label for="major" class="form-label">Major/Field of Study <span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('major') is-invalid @enderror"
-                                    id="major" name="major" value="{{ old('major') }}" required>
+                                    id="major" name="major" value="{{ old('major', $rejectedSeller->major ?? '') }}"
+                                    required>
                                 @error('major')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -55,7 +95,8 @@
                                 <label for="university" class="form-label">University <span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('university') is-invalid @enderror"
-                                    id="university" name="university" value="{{ old('university') }}" required>
+                                    id="university" name="university"
+                                    value="{{ old('university', $rejectedSeller->university ?? '') }}" required>
                                 @error('university')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -65,12 +106,17 @@
                             <div class="mb-3">
                                 <label for="portfolio_url" class="form-label">Portfolio URL</label>
                                 <input type="url" class="form-control @error('portfolio_url') is-invalid @enderror"
-                                    id="portfolio_url" name="portfolio_url" value="{{ old('portfolio_url') }}"
+                                    id="portfolio_url" name="portfolio_url"
+                                    value="{{ old('portfolio_url', $rejectedSeller->portfolio_url ?? '') }}"
                                     placeholder="https://yourportfolio.com">
                                 @error('portfolio_url')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            @php
+                                $previousSkills = old('skills', $rejectedSeller->skills ?? []);
+                            @endphp
 
                             <!-- Skills -->
                             <div class="mb-4">
@@ -86,7 +132,7 @@
                                                         <input class="form-check-input skill-checkbox" type="checkbox"
                                                             name="skills[]" value="{{ $skill->name }}"
                                                             id="skill-{{ $skill->id }}"
-                                                            {{ in_array($skill->name, old('skills', [])) ? 'checked' : '' }}>
+                                                            {{ in_array($skill->name, $previousSkills) ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="skill-{{ $skill->id }}">
                                                             {{ $skill->name }}
                                                         </label>

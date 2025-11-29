@@ -31,6 +31,15 @@ class UserSeeder extends Seeder
             'role' => 'user',
         ]);
 
+        User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'is_seller' => false,
+            'role' => 'admin',
+        ]);
+
         // Create seller profile for seller user
         Seller::create([
             'user_id' => $seller->id,
