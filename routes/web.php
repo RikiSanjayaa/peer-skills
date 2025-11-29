@@ -46,7 +46,8 @@ Route::middleware(['auth', 'no-admin'])->group(function () {
 
 // Gig routes - Public viewing, but create/edit/delete BLOCKED FOR ADMIN
 Route::get('/gigs', [GigController::class, 'index'])->name('gigs.index');
-Route::get('/gigs/{gig}', [GigController::class, 'show'])->name('gigs.show');
+// ini membuat conflict. pindah ke bawah
+// Route::get('/gigs/{gig}', [GigController::class, 'show'])->name('gigs.show');
 Route::get('/gigs-search-suggestions', [GigController::class, 'searchSuggestions'])->name('gigs.search.suggestions');
 
 Route::middleware(['auth', 'no-admin'])->group(function () {
@@ -57,6 +58,9 @@ Route::middleware(['auth', 'no-admin'])->group(function () {
     Route::patch('/gigs/{gig}', [GigController::class, 'update']);
     Route::delete('/gigs/{gig}', [GigController::class, 'destroy'])->name('gigs.destroy');
 });
+
+// kalau disimpan di atas, /create dianggap {gig}
+Route::get('/gigs/{gig}', [GigController::class, 'show'])->name('gigs.show');
 
 // Profile routes
 Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
