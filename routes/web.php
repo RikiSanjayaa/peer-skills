@@ -7,6 +7,11 @@ use App\Http\Controllers\SellerController;
 use App\Models\Gig;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SellerRequestController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     $featuredGigs = Gig::with(['seller.user', 'category'])
@@ -16,6 +21,9 @@ Route::get('/', function () {
 
     return view('welcome', compact('featuredGigs'));
 })->name('home');
+
+
+
 
 // Order routes - BLOCKED FOR ADMIN
 Route::middleware(['auth', 'no-admin'])->group(function () {
@@ -43,6 +51,17 @@ Route::middleware(['auth', 'no-admin'])->group(function () {
     // Both can do
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 });
+
+
+//Review routes - BLOCKED FOR ADMIN
+Route::middleware(['auth', 'no-admin'])->group(function () {
+    Route::get('/orders/{order}/review', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/orders/{order}/review', [ReviewController::class, 'store'])->name('reviews.store');
+
+    // Report
+    Route::post('/orders/{order}/report', [ReportController::class, 'store'])->name('orders.report.store');
+});
+
 
 // Gig routes - Public viewing, but create/edit/delete BLOCKED FOR ADMIN
 Route::get('/gigs', [GigController::class, 'index'])->name('gigs.index');
@@ -81,22 +100,41 @@ Route::middleware(['auth', 'no-admin'])->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Manage Categories
-    Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
+    Route::resource('categories', CategoryController::class);
 
-    // Manage Users (WITHOUT promote/demote - admin only via seeder)
-    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+    // Manage Users
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    // MANAGE SELLER REQUESTS
-    Route::get('/seller-requests', [App\Http\Controllers\Admin\SellerRequestController::class, 'index'])->name('sellers.index');
-    Route::get('/seller-requests/{id}', [App\Http\Controllers\Admin\SellerRequestController::class, 'show'])->name('sellers.show');
-    Route::patch('/seller-requests/{id}/approve', [App\Http\Controllers\Admin\SellerRequestController::class, 'approve'])->name('sellers.approve');
-    Route::post('/seller-requests/{id}/reject', [App\Http\Controllers\Admin\SellerRequestController::class, 'reject'])->name('sellers.reject');
-    Route::post('/seller-requests/{id}/suspend', [App\Http\Controllers\Admin\SellerRequestController::class, 'suspend'])->name('sellers.suspend');
-    Route::patch('/seller-requests/{id}/reactivate', [App\Http\Controllers\Admin\SellerRequestController::class, 'reactivate'])->name('sellers.reactivate');
+    // Manage Seller Requests
+    Route::get('/seller-requests', [SellerRequestController::class, 'index'])->name('sellers.index');
+    Route::get('/seller-requests/{id}', [SellerRequestController::class, 'show'])->name('sellers.show');
+    Route::patch('/seller-requests/{id}/approve', [SellerRequestController::class, 'approve'])->name('sellers.approve');
+    Route::post('/seller-requests/{id}/reject', [SellerRequestController::class, 'reject'])->name('sellers.reject');
+    Route::post('/seller-requests/{id}/suspend', [SellerRequestController::class, 'suspend'])->name('sellers.suspend');
+    Route::patch('/seller-requests/{id}/reactivate', [SellerRequestController::class, 'reactivate'])->name('sellers.reactivate');
+
+    // MANAGE REPORTS
+    Route::get('/reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::patch('/reports/{report}/resolve', [App\Http\Controllers\Admin\ReportController::class, 'resolve'])->name('reports.resolve');
+    Route::patch('/reports/{report}/dismiss', [App\Http\Controllers\Admin\ReportController::class, 'dismiss'])->name('reports.dismiss');
+
+    // ... route resolve/dismiss ...
+    Route::post('/reports/{report}/suspend', [App\Http\Controllers\Admin\ReportController::class, 'suspend'])->name('reports.suspend');
+
+    Route::patch('/users/{user}/unban', [App\Http\Controllers\Admin\UserController::class, 'unban'])->name('users.unban');
+
+    // MANAGE BAN APPEALS
+    Route::get('/appeals', [App\Http\Controllers\Admin\BanAppealController::class, 'index'])->name('appeals.index');
+    Route::patch('/appeals/{id}/approve', [App\Http\Controllers\Admin\BanAppealController::class, 'approve'])->name('appeals.approve');
+    Route::delete('/appeals/{id}/reject', [App\Http\Controllers\Admin\BanAppealController::class, 'reject'])->name('appeals.reject');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/suspended', [App\Http\Controllers\SuspendedUserController::class, 'show'])->name('suspended.show');
+    Route::post('/suspended/appeal', [App\Http\Controllers\SuspendedUserController::class, 'storeAppeal'])->name('suspended.appeal');
 });
 
 require __DIR__ . '/auth.php';

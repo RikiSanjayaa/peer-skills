@@ -42,4 +42,13 @@ class UserController extends Controller
         $user->delete();
         return redirect()->back()->with('success', 'User berhasil dihapus.');
     }
+    public function unban(User $user)
+    {
+        $user->update(['suspended_until' => null]); // Hapus tanggal hukuman
+
+        // Opsional: Tandai bandingnya (kalau ada) jadi approved
+        \App\Models\BanAppeal::where('user_id', $user->id)->update(['status' => 'approved']);
+
+        return redirect()->back()->with('success', 'User berhasil dibebaskan (Unbanned)!');
+    }
 }

@@ -9,6 +9,54 @@
 @endphp
 
 @section('content')
+    {{-- STYLE BINTANG REVIEW --}}
+    @push('styles')
+        <style>
+            /* Styling untuk Rating Bintang "Wah" */
+            .rate {
+                float: left;
+                height: 46px;
+                padding: 0 10px;
+            }
+
+            .rate:not(:checked)>input {
+                position: absolute;
+                top: -9999px;
+            }
+
+            .rate:not(:checked)>label {
+                float: right;
+                width: 1em;
+                overflow: hidden;
+                white-space: nowrap;
+                cursor: pointer;
+                font-size: 30px;
+                color: #ccc;
+            }
+
+            .rate:not(:checked)>label:before {
+                content: '★ ';
+            }
+
+            .rate>input:checked~label {
+                color: #ffc700;
+            }
+
+            .rate:not(:checked)>label:hover,
+            .rate:not(:checked)>label:hover~label {
+                color: #deb217;
+            }
+
+            .rate>input:checked+label:hover,
+            .rate>input:checked+label:hover~label,
+            .rate>input:checked~label:hover,
+            .rate>input:checked~label:hover~label,
+            .rate>label:hover~input:checked~label {
+                color: #c59b08;
+            }
+        </style>
+    @endpush
+
     <div class="container py-5">
         <div class="row">
             <!-- Main Content -->
@@ -50,6 +98,68 @@
                         </div>
                     </div>
                 </div>
+
+                @if ($order->status === 'completed' && !$order->review)
+                    <div class="card border-0 shadow-sm mb-4 bg-success bg-opacity-10">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="fw-bold text-success mb-1"><i class="bi bi-check-circle-fill me-2"></i>Pesanan
+                                    Selesai!</h5>
+                                <p class="mb-0 text-muted small">Pekerjaan telah diterima. Yuk, beri rating untuk Seller!
+                                </p>
+                            </div>
+                            <button type="button" class="btn btn-warning fw-bold text-dark shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#reviewModal">
+                                <i class="bi bi-star-fill me-1"></i> Beri Ulasan
+                            </button>
+                        </div>
+                    </div>
+                @endif
+
+                @if ($order->review)
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start">
+
+                                {{-- LOGIKA AVATAR: Selalu tampilkan foto SI PENULIS REVIEW (Buyer), bukan user yang login --}}
+                                @php
+                                    $reviewer = $order->buyer; // Karena yang review pasti buyer
+                                @endphp
+
+                                @if ($reviewer->avatar)
+                                    <img src="{{ $reviewer->avatar_url }}" class="rounded-circle me-3" width="50"
+                                        height="50" style="object-fit: cover;">
+                                @else
+                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3"
+                                        style="width: 50px; height: 50px;">
+                                        {{ substr($reviewer->name, 0, 1) }}
+                                    </div>
+                                @endif
+
+                                <div>
+                                    {{-- LOGIKA JUDUL --}}
+                                    @if ($isBuyer)
+                                        <h6 class="fw-bold mb-1">Ulasan Anda</h6>
+                                    @else
+                                        <h6 class="fw-bold mb-1">Ulasan dari {{ $reviewer->name }}</h6>
+                                    @endif
+
+                                    <div class="text-warning mb-2">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= $order->review->rating)
+                                                <i class="bi bi-star-fill"></i>
+                                            @else
+                                                <i class="bi bi-star"></i>
+                                            @endif
+                                        @endfor
+                                        <span class="text-dark fw-bold ms-2 small">{{ $order->review->rating }}.0</span>
+                                    </div>
+                                    <p class="text-muted mb-0">"{{ $order->review->comment }}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Gig Info -->
                 <div class="card border-0 shadow-sm mb-4">
@@ -299,6 +409,13 @@
                         <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary w-100 mt-3">
                             <i class="bi bi-arrow-left me-1"></i>Back to Orders
                         </a>
+
+                        <div class="mt-4 pt-3 border-top text-center">
+                            <button type="button" class="btn btn-link text-danger text-decoration-none btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#reportModal">
+                                <i class="bi bi-flag-fill me-1"></i> Laporkan Masalah
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -562,4 +679,109 @@
             </div>
         </div>
     @endif
+
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-0 bg-primary text-white">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-award me-2"></i>Beri Ulasan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <form action="{{ route('reviews.store', $order->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-body p-4 text-center">
+                        <h5 class="mb-3">Bagaimana hasil kerja Seller?</h5>
+                        <p class="text-muted small mb-4">Klik bintang di bawah untuk memberikan rating</p>
+
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="rate">
+                                <input type="radio" id="star5" name="rating" value="5" required />
+                                <label for="star5" title="Sempurna">5 stars</label>
+                                <input type="radio" id="star4" name="rating" value="4" />
+                                <label for="star4" title="Sangat Bagus">4 stars</label>
+                                <input type="radio" id="star3" name="rating" value="3" />
+                                <label for="star3" title="Bagus">3 stars</label>
+                                <input type="radio" id="star2" name="rating" value="2" />
+                                <label for="star2" title="Buruk">2 stars</label>
+                                <input type="radio" id="star1" name="rating" value="1" />
+                                <label for="star1" title="Sangat Buruk">1 star</label>
+                            </div>
+                        </div>
+
+                        <div class="form-floating">
+                            <textarea class="form-control" name="comment" placeholder="Tulis pengalamanmu di sini" id="floatingTextarea2"
+                                style="height: 100px"></textarea>
+                            <label for="floatingTextarea2">Ceritakan pengalamanmu (Opsional)</label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 pt-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary fw-bold px-5">Kirim Ulasan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('orders.report.store', $order->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold text-danger">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Laporkan Pesanan
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="alert alert-secondary small mb-3">
+                            Laporkan masalah yang Anda alami dengan pesanan ini. Tim kami akan meninjau laporan Anda dan
+                            mengambil tindakan yang sesuai.
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Alasan Pelaporan</label>
+                            <select class="form-select" name="reason" required>
+                                <option value="">Pilih alasan...</option>
+
+                                @if ($isBuyer)
+                                    {{-- Opsi untuk BUYER (Melaporkan Seller) --}}
+                                    <option value="seller_not_responsive">Seller Tidak Responsif</option>
+                                    <option value="rude_behavior">Perilaku Kasar/Tidak Sopan</option>
+                                    <option value="scam_attempt">Indikasi Penipuan</option>
+                                    <option value="incomplete_delivery">Hasil Kerja Tidak Sesuai</option>
+                                @else
+                                    {{-- Opsi untuk SELLER (Melaporkan Buyer) --}}
+                                    <option value="buyer_unresponsive">Buyer Tidak Responsif</option>
+                                    <option value="rude_behavior">Perilaku Kasar/Tidak Sopan</option>
+                                    <option value="unreasonable_demands">Permintaan Tidak Masuk Akal</option>
+                                    <option value="spam_scam">Spam / Percobaan Penipuan</option>
+                                @endif
+
+                                {{-- Opsi Umum --}}
+                                <option value="other">Lainnya</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Detail Masalah</label>
+                            <textarea class="form-control" name="description" rows="4" placeholder="Ceritakan kronologi masalahnya..."
+                                required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger fw-bold">Kirim Laporan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection

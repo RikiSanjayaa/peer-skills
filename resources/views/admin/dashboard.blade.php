@@ -40,7 +40,7 @@
             </div>
 
             <div class="row g-4 mb-5">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body text-center py-4">
                             <div class="mb-2 text-primary">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body text-center py-4">
                             <div class="mb-2 text-success">
@@ -74,7 +74,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body text-center py-4">
                             <div class="mb-2 text-warning">
@@ -92,7 +92,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                {{-- <div class="col-md-3">
                     <div class="card border-0 shadow-sm h-100 bg-primary text-white">
                         <div class="card-body text-center py-4 d-flex flex-column justify-content-center">
                             <h5 class="fw-bold">Manage Site</h5>
@@ -105,10 +105,18 @@
                                     class="btn btn-warning btn-sm fw-bold text-dark mt-2">
                                     Verifikasi Seller
                                 </a>
+                                <a href="{{ route('admin.reports.index') }}"
+                                    class="btn btn-danger btn-sm fw-bold w-100 mt-2">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Manage Reports
+                                </a>
+
+                                <a href="{{ route('admin.appeals.index') }}" class="btn btn-dark btn-sm fw-bold w-100 mt-2">
+                                    <i class="bi bi-shield-lock-fill me-1"></i> Banding User
+                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <div class="card border-0 shadow-sm">

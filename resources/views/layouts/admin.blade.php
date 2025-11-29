@@ -17,7 +17,6 @@
         body {
             background-color: #f8f9fa;
         }
-
         .admin-content {
             min-height: calc(100vh - 56px);
         }
@@ -27,11 +26,23 @@
 </head>
 
 <body>
+
     <div id="app">
+        
+        @include('components.admin-sidebar')
+
+        {{-- 
+           Trik: Kita bungkus navbar dalam div agar bisa menyelipkan tombol hamburger 
+           di sebelah kirinya, ATAU kita edit file components.navbar sedikit saja.
+           
+           Untuk cara paling aman tanpa merusak kode temanmu, kita pakai Navbar bawaan,
+           tapi kita inject tombol Hamburger di file components/navbar.blade.php (lihat langkah 2 di bawah).
+        --}}
         @include('components.navbar')
 
         <div class="admin-content">
             <div class="container-fluid px-4 py-3">
+                
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
@@ -58,7 +69,7 @@
         </div>
 
         {{-- Admin Footer --}}
-        <footer class="bg-dark text-light py-3">
+        <footer class="bg-dark text-light py-3 mt-auto">
             <div class="container-fluid px-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <small class="text-muted">
@@ -78,5 +89,4 @@
 
     @stack('scripts')
 </body>
-
 </html>

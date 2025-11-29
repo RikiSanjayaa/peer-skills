@@ -19,6 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         //
     })
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckSuspension::class,
+        ]);
+        // ... alias admin yang kemarin ...
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

@@ -8,29 +8,39 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="{{ asset('images/logo.png') }}" alt="PeerSkill" height="50" class="me-2">
-        </a>
+        
+        {{-- =============================================== --}}
+        {{-- LOGIKA 1: JIKA ADMIN (Menu Bersih, Logo Kanan) --}}
+        {{-- =============================================== --}}
+        @if (Auth::check() && Auth::user()->role === 'admin')
+            
+            <div class="d-flex align-items-center w-100">
+                <button class="btn btn-outline-dark border-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+                <a class="navbar-brand ms-auto d-flex align-items-center" href="{{ route('admin.dashboard') }}">
+                    <img src="{{ asset('images/logo.png') }}" alt="PeerSkill" height="50">
+                </a>
+            </div>
+        @else
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center">
-                @auth
-                    @if (Auth::check() && Auth::user()->role === 'admin')
-                        <li class="nav-item">
-                            <a class="nav-link {{ $currentRoute === 'admin.dashboard' ? 'active' : '' }}"
-                                href="{{ route('admin.dashboard') }}">
-                                Admin Dashboard
-                            </a>
-                        </li>
-                    @endif
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{{ asset('images/logo.png') }}" alt="PeerSkill" height="50" class="me-2">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    
                     <li class="nav-item">
                         <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Home</a>
                     </li>
-                    @if (Auth::user()->role !== 'admin')
+
+                    @auth
                         @if (Auth::user()->is_seller)
                             <li class="nav-item">
                                 <a class="nav-link {{ $currentRoute === 'seller.dashboard' ? 'active' : '' }}"
@@ -42,60 +52,58 @@
                                     href="{{ route('seller.register') }}">Become a Seller</a>
                             </li>
                         @endif
-                    @endif
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                            data-bs-toggle="dropdown">
-                            @if (Auth::user()->avatar)
-                                <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}"
-                                    class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
-                            @else
-                                <div class="profile-avatar me-2" style="background-color: {{ $avatarColor }}">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                </div>
-                            @endif
-                            <span class="d-none d-lg-inline">{{ Auth::user()->name }}</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.show', Auth::user()) }}">
-                                    <i class="bi bi-person me-2"></i>My Profile
-                                </a>
-                            </li>
-                            @if (Auth::user()->role !== 'admin')
+
+                        <li class="nav-item dropdown ms-2">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                @if (Auth::user()->avatar)
+                                    <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}"
+                                        class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                @else
+                                    <div class="profile-avatar me-2" style="background-color: {{ $avatarColor }}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
+                                @endif
+                                <span class="d-none d-lg-inline">{{ Auth::user()->name }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('orders.index') }}">
-                                        <i class="bi bi-bag me-2"></i>My Orders
+                                    <a class="dropdown-item" href="{{ route('profile.show', Auth::user()) }}">
+                                        <i class="bi bi-person me-2"></i>My Profile
                                     </a>
                                 </li>
-                            @endif
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="bi bi-gear me-2"></i>Edit Profile
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">Sign In</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="{{ route('register') }}" style="color: white;">Sign Up</a>
-                    </li>
-                @endauth
-            </ul>
-        </div>
+                                @if (!Auth::user()->is_seller)
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('orders.index') }}">
+                                            <i class="bi bi-bag me-2"></i>My Orders
+                                        </a>
+                                    </li>
+                                @endif
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                        <i class="bi bi-gear me-2"></i>Edit Profile
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary ms-2 text-white" href="{{ route('register') }}">Sign Up</a>
+                        </li>
+                    @endauth
+                </ul>
+            </div>
+        @endif
     </div>
 </nav>

@@ -78,6 +78,12 @@ class Order extends Model
         return $this->hasOne(TutoringSchedule::class);
     }
 
+    // New relasi untuk Review
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
+
     /**
      * Scopes
      */
@@ -223,4 +229,6 @@ class Order extends Model
     {
         return $this->deliveries()->latest()->first();
     }
+
+    
 }

@@ -52,7 +52,12 @@
                                         </td>
                                         <td>{{ $user->email }}</td>
                                         <td>
-                                            @if ($user->is_seller)
+                                            @if ($user->suspended_until && $user->suspended_until->isFuture())
+                                                <span class="badge bg-danger">SUSPENDED</span>
+                                                <div class="small text-danger mt-1" style="font-size: 0.75rem;">
+                                                    s.d {{ $user->suspended_until->format('d M Y') }}
+                                                </div>
+                                            @elseif ($user->is_seller)
                                                 <span class="badge bg-success">SELLER</span>
                                             @else
                                                 <span class="badge bg-secondary">BUYER</span>
@@ -61,21 +66,39 @@
                                         <td>{{ $user->created_at->format('d M Y') }}</td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <a href="{{ route('profile.show', $user) }}"
-                                                    class="btn btn-sm btn-outline-primary" target="_blank"
-                                                    title="Lihat Profil">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
 
-                                                <form id="delete-user-{{ $user->id }}"
-                                                    action="{{ route('admin.users.destroy', $user->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                                        onclick="confirmDeleteUser({{ $user->id }}, '{{ $user->name }}')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
+                                                {{-- LOGIKA TOMBOL UNBAN (Hanya muncul kalau kena suspend) --}}
+                                                @if ($user->suspended_until && $user->suspended_until->isFuture())
+                                                    <form action="{{ route('admin.users.unban', $user->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit"
+                                                            class="btn btn-sm btn-info text-white fw-bold shadow-sm"
+                                                            title="Cabut Hukuman (Unban)">
+                                                            <i class="bi bi-unlock-fill me-1"></i> Unban
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    
+                                                    <a href="{{ route('profile.show', $user) }}"
+                                                        class="btn btn-sm btn-outline-primary" target="_blank"
+                                                        title="Lihat Profil">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+
+                                                    <form id="delete-user-{{ $user->id }}"
+                                                        action="{{ route('admin.users.destroy', $user->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                            onclick="confirmDeleteUser({{ $user->id }}, '{{ $user->name }}')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
                                             </div>
                                         </td>
                                     </tr>

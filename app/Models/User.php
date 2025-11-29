@@ -30,6 +30,7 @@ class User extends Authenticatable
         'phone',
         'bio',
         'social_links',
+        'suspended_until',
     ];
 
     /**
@@ -54,6 +55,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_seller' => 'boolean',
             'social_links' => 'array',
+            'suspended_until' => 'datetime',
         ];
     }
 
