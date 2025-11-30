@@ -7,6 +7,7 @@ use App\Http\Controllers\SellerController;
 use App\Models\Gig;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\ChatController;
 
 Route::get('/', function () {
     $featuredGigs = Gig::with(['seller.user', 'category'])
@@ -80,7 +81,12 @@ Route::middleware(['auth', 'no-admin'])->group(function () {
     Route::get('/dashboard/seller', [SellerController::class, 'dashboard'])->name('seller.dashboard');
 });
 
+Route::middleware('auth')->group(function () {
+    // Route Chat
+    Route::get('/orders/{order}/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/orders/{order}/chat', [ChatController::class, 'store'])->name('chat.store');
 
+});
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 

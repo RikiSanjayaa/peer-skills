@@ -121,8 +121,7 @@
                                     </div>
                                 </div>
                                 @if ($order->tutoringSchedule->external_link)
-                                    <a href="{{ $order->tutoringSchedule->external_link }}" target="_blank"
-                                        class="btn btn-primary">
+                                    <a href="{{ $order->tutoringSchedule->external_link }}" target="_blank" class="btn btn-primary">
                                         <i class="bi bi-camera-video me-1"></i>Join Session
                                     </a>
                                 @endif
@@ -188,17 +187,38 @@
 
                 <!-- Chat Button -->
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body text-center py-4">
-                        <i class="bi bi-chat-dots display-6 text-muted mb-3 d-block"></i>
-                        <h5 class="mb-2">Need to discuss something?</h5>
-                        <p class="text-muted small mb-3">
-                            Chat directly with {{ $isBuyer ? 'the seller' : 'the buyer' }} about this order
-                        </p>
-                        <button class="btn btn-outline-primary" disabled>
-                            <i class="bi bi-chat-left-text me-2"></i>
-                            Chat with {{ $isBuyer ? 'Seller' : 'Buyer' }} (Coming Soon)
-                        </button>
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white py-3 border-bottom-0">
+                            <h5 class="mb-0 fw-bold"><i class="bi bi-chat-dots me-2"></i>Diskusi Pesanan</h5>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div id="chat-box" class="d-flex flex-column gap-3 p-3 mb-3 bg-light rounded-3 border"
+                                style="height: 400px; overflow-y: auto;">
+                                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                    <div class="text-center">
+                                        <div class="spinner-border spinner-border-sm mb-2" role="status"></div>
+                                        <p class="small mb-0">Memuat percakapan...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form id="chat-form" class="mt-3">
+                                <div class="input-group">
+                                    <input type="text" id="message-input" class="form-control border-end-0 py-2"
+                                        placeholder="Tulis pesan..." required autocomplete="off">
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-send-fill"></i> Kirim
+                                    </button>
+                                </div>
+                                <small class="text-muted fst-italic mt-1 d-block" style="font-size: 0.75rem;">
+                                    *Pesan terlihat oleh kedua pihak.
+                                </small>
+                            </form>
+                        </div>
                     </div>
+
+                </div>
+                <div class="col-lg-4">
                 </div>
             </div>
 
@@ -237,15 +257,13 @@
                         @if ($isSeller)
                             {{-- Seller Actions --}}
                             @if ($order->canBeQuoted())
-                                <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#quoteModal">
+                                <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#quoteModal">
                                     <i class="bi bi-currency-dollar me-1"></i>Send Quote
                                 </button>
                             @endif
 
                             @if ($order->canBeDelivered())
-                                <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#deliverModal">
+                                <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal" data-bs-target="#deliverModal">
                                     @if ($order->isTutoring())
                                         <i class="bi bi-check-circle me-1"></i>Mark Session Complete
                                     @else
@@ -271,8 +289,7 @@
                             @endif
 
                             @if ($order->canRequestRevision())
-                                <button class="btn btn-warning w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#revisionModal">
+                                <button class="btn btn-warning w-100 mb-2" data-bs-toggle="modal" data-bs-target="#revisionModal">
                                     <i class="bi bi-arrow-repeat me-1"></i>Request Revision
                                 </button>
                             @endif
@@ -289,8 +306,7 @@
 
                         {{-- Cancel (both) --}}
                         @if ($order->canBeCancelled())
-                            <button class="btn btn-outline-danger w-100" data-bs-toggle="modal"
-                                data-bs-target="#cancelModal">
+                            <button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#cancelModal">
                                 <i class="bi bi-x-circle me-1"></i>Cancel Order
                             </button>
                         @endif
@@ -470,8 +486,7 @@
                             </div>
                         </form>
                     @else
-                        <form action="{{ route('orders.deliver', $order) }}" method="POST"
-                            enctype="multipart/form-data">
+                        <form action="{{ route('orders.deliver', $order) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-header">
                                 <h5 class="modal-title">Submit Delivery</h5>
@@ -480,8 +495,8 @@
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label class="form-label">Delivery Message</label>
-                                    <textarea class="form-control" name="message" rows="4" placeholder="Describe what you're delivering..."
-                                        required></textarea>
+                                    <textarea class="form-control" name="message" rows="4"
+                                        placeholder="Describe what you're delivering..." required></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Upload File (optional)</label>
@@ -489,8 +504,7 @@
                                     <div class="form-text">Max 50MB</div>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="is_final" value="1"
-                                        id="isFinal">
+                                    <input type="checkbox" class="form-check-input" name="is_final" value="1" id="isFinal">
                                     <label class="form-check-label" for="isFinal">
                                         This is the final delivery
                                     </label>
@@ -521,8 +535,8 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="form-label">What needs to be changed?</label>
-                                <textarea class="form-control" name="message" rows="4" placeholder="Describe the changes you need..."
-                                    required></textarea>
+                                <textarea class="form-control" name="message" rows="4"
+                                    placeholder="Describe the changes you need..." required></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -550,7 +564,8 @@
                             <p class="text-danger">Are you sure you want to cancel this order?</p>
                             <div class="mb-3">
                                 <label class="form-label">Reason (optional)</label>
-                                <textarea class="form-control" name="reason" rows="3" placeholder="Why are you cancelling?"></textarea>
+                                <textarea class="form-control" name="reason" rows="3"
+                                    placeholder="Why are you cancelling?"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -562,4 +577,121 @@
             </div>
         </div>
     @endif
+
+    {{-- Cath Skrip --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const orderId = "{{ $order->id }}";
+            const chatBox = document.getElementById('chat-box');
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const currentUserId = {{ auth()->id() }};
+
+            // Fungsi scroll ke bawah otomatis
+            function scrollToBottom() {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            function fetchMessages() {
+                fetch(`/orders/${orderId}/chat`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Simpan posisi scroll agar tidak loncat saat user membaca chat lama
+                        const isScrolledToBottom = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 150;
+
+                        chatBox.innerHTML = '';
+
+                        if (data.length === 0) {
+                            chatBox.innerHTML = `
+                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                        <div class="text-center">
+                                            <i class="bi bi-chat-square-text fs-1 opacity-25"></i>
+                                            <p class="small mt-2">Belum ada pesan. Mulai diskusi!</p>
+                                        </div>
+                                    </div>`;
+                            return;
+                        }
+
+                        data.forEach(msg => {
+                            const isMe = msg.user_id === currentUserId;
+
+                            const alignClass = isMe ? 'align-self-end' : 'align-self-start';
+                            const bubbleColor = isMe ? 'bg-primary text-white' : 'bg-white text-dark border';
+                            const userLabel = isMe ? 'Anda' : msg.user.name;
+                            const metaAlign = isMe ? 'text-end' : 'text-start';
+
+                            const bubble = `
+                                    <div class="d-flex flex-column ${alignClass}" style="max-width: 80%; min-width: 30%;">
+                                        <div class="d-flex justify-content-between align-items-end mb-1 px-1">
+                                            <small class="fw-bold ${isMe ? 'text-primary' : 'text-dark'}" style="font-size: 0.75rem;">${userLabel}</small>
+                                        </div>
+                                        <div class="p-3 rounded-3 shadow-sm ${bubbleColor}" style="word-wrap: break-word;">
+                                            ${msg.message}
+                                        </div>
+                                        <small class="text-muted mt-1 ${metaAlign}" style="font-size: 0.70rem;">
+                                            ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </small>
+                                    </div>
+                                `;
+                            chatBox.insertAdjacentHTML('beforeend', bubble);
+                        });
+
+                        // Scroll ke bawah hanya jika user sedang di bawah
+                        if (isScrolledToBottom) {
+                            scrollToBottom();
+                        }
+                    })
+                    .catch(error => console.error('Error fetching chat:', error));
+            }
+
+            // Load pesan pertama kali
+            fetchMessages();
+
+            // Auto-refresh chat setiap 3 detik
+            setInterval(fetchMessages, 3000);
+
+            // Kirim Pesan
+            chatForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const message = messageInput.value;
+                if (!message.trim()) return;
+
+                const oldMessage = messageInput.value;
+                messageInput.value = '';
+
+                // Loading state tombol
+                const btn = chatForm.querySelector('button');
+                const originalBtnHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                fetch(`/orders/${orderId}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Gagal mengirim');
+                        return response.json();
+                    })
+                    .then(() => {
+                        fetchMessages();
+                        setTimeout(scrollToBottom, 300); // Paksa scroll setelah kirim
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Gagal mengirim pesan.');
+                        messageInput.value = oldMessage;
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalBtnHtml;
+                        messageInput.focus();
+                    });
+            });
+        });
+    </script>
 @endsection
