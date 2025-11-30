@@ -5,7 +5,7 @@
 @section('content')
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h2 mb-0">My Orders</h1>
+            <h1 class="h2 mb-0">Pesanan Saya</h1>
         </div>
 
         <!-- Role Toggle -->
@@ -16,12 +16,12 @@
                     <div class="btn-group" role="group">
                         <a href="{{ route('orders.index', ['role' => 'buyer', 'filter' => $filter]) }}"
                             class="btn {{ $role === 'buyer' ? 'btn-primary' : 'btn-outline-primary' }}">
-                            <i class="bi bi-cart me-1"></i> Buyer
+                            <i class="bi bi-cart me-1"></i> Pembeli
                         </a>
                         @if (auth()->user()->is_seller)
                             <a href="{{ route('orders.index', ['role' => 'seller', 'filter' => $filter]) }}"
                                 class="btn {{ $role === 'seller' ? 'btn-primary' : 'btn-outline-primary' }}">
-                                <i class="bi bi-shop me-1"></i> Seller
+                                <i class="bi bi-shop me-1"></i> Penjual
                             </a>
                         @endif
                     </div>
@@ -32,15 +32,15 @@
                     <div class="btn-group" role="group">
                         <a href="{{ route('orders.index', ['role' => $role, 'filter' => 'all']) }}"
                             class="btn btn-sm {{ $filter === 'all' ? 'btn-secondary' : 'btn-outline-secondary' }}">
-                            All
+                            Semua
                         </a>
                         <a href="{{ route('orders.index', ['role' => $role, 'filter' => 'active']) }}"
                             class="btn btn-sm {{ $filter === 'active' ? 'btn-secondary' : 'btn-outline-secondary' }}">
-                            Active
+                            Aktif
                         </a>
                         <a href="{{ route('orders.index', ['role' => $role, 'filter' => 'completed']) }}"
                             class="btn btn-sm {{ $filter === 'completed' ? 'btn-secondary' : 'btn-outline-secondary' }}">
-                            Completed
+                            Selesai
                         </a>
                     </div>
                 </div>
@@ -50,17 +50,17 @@
         @if ($orders->isEmpty())
             <div class="text-center py-5">
                 <i class="bi bi-inbox display-1 text-muted"></i>
-                <h3 class="mt-3 text-muted">No orders found</h3>
+                <h3 class="mt-3 text-muted">Pesanan Tidak Ditemukan</h3>
                 <p class="text-muted">
                     @if ($role === 'buyer')
-                        You haven't placed any orders yet. Browse gigs to get started!
+                        Anda belum menempatkan pesanan apa pun. Jelajahi Gig untuk memulai!
                     @else
-                        You don't have any orders as a seller yet.
+                        Anda belum memiliki pesanan sebagai Penjual.
                     @endif
                 </p>
                 @if ($role === 'buyer')
                     <a href="{{ route('gigs.index') }}" class="btn btn-primary">
-                        <i class="bi bi-search me-1"></i> Browse Gigs
+                        <i class="bi bi-search me-1"></i> Jelajahi Gig
                     </a>
                 @endif
             </div>
@@ -97,10 +97,10 @@
                                             </span>
                                             @if ($order->type === 'tutoring')
                                                 <span class="badge bg-info text-dark">
-                                                    <i class="bi bi-mortarboard me-1"></i>Tutoring
+                                                    <i class="bi bi-mortarboard me-1"></i>Bimbingan
                                                 </span>
                                             @endif
-                                            <small class="text-muted">Order #{{ $order->id }}</small>
+                                            <small class="text-muted">Pesanan #{{ $order->id }}</small>
                                         </div>
 
                                         <h5 class="mb-1">
@@ -112,9 +112,9 @@
 
                                         <div class="text-muted small">
                                             @if ($role === 'buyer')
-                                                <span>Seller: {{ $order->seller->name }}</span>
+                                                <span>Penjual: {{ $order->seller->name }}</span>
                                             @else
-                                                <span>Buyer: {{ $order->buyer->name }}</span>
+                                                <span>Pembeli: {{ $order->buyer->name }}</span>
                                             @endif
                                             <span class="mx-2">•</span>
                                             <span>{{ $order->created_at->diffForHumans() }}</span>
@@ -128,12 +128,12 @@
                                                 Rp {{ number_format($order->price, 0, ',', '.') }}
                                             </div>
                                         @else
-                                            <span class="text-muted">Awaiting Quote</span>
+                                            <span class="text-muted">Menunggu Penawaran</span>
                                         @endif
 
                                         <a href="{{ route('orders.show', $order) }}"
                                             class="btn btn-sm btn-outline-primary mt-2">
-                                            View Details
+                                            Lihat Detail
                                         </a>
                                     </div>
                                 </div>

@@ -8,9 +8,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="{{ asset('images/logo.png') }}" alt="PeerSkill" height="50" class="me-2">
-        </a>
+        <a href="{{ url('/') }}" class="navbar-brand">
+    {{-- BARIS INI MENAMPILKAN GAMBAR LOGO --}}
+    <img src="{{ asset('images/logo.jpeg') }}" alt="PeerSkill Logo" height="50" class="me-2">
+    
+    {{-- BARIS INI MENAMPILKAN TEKS PEERSKILL --}}
+    PeerSkill
+</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -23,7 +27,7 @@
                         <li class="nav-item">
                             <a class="nav-link {{ $currentRoute === 'admin.dashboard' ? 'active' : '' }}"
                                 href="{{ route('admin.dashboard') }}">
-                                Admin Dashboard
+                                Dashboard Admin
                             </a>
                         </li>
                     @endif
@@ -34,7 +38,7 @@
                         @if (Auth::user()->is_seller)
                             <li class="nav-item">
                                 <a class="nav-link {{ $currentRoute === 'seller.dashboard' ? 'active' : '' }}"
-                                    href="{{ route('seller.dashboard') }}">Seller Dashboard</a>
+                                    href="{{ route('seller.dashboard') }}">Dashboard Penjual</a>
                             </li>
                         @else
                             <li class="nav-item">
