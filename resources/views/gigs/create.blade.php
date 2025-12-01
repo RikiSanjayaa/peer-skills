@@ -8,18 +8,18 @@
             <div class="col-lg-9">
                 <div class="card shadow-sm">
                     <div class="card-body p-5">
-                        <h2 class="mb-4">Create a New Gig</h2>
-                        <p class="text-muted mb-4">Fill out the details below to create your service offering.</p>
+                        <h2 class="mb-4">Buat Layanan Baru</h2>
+                        <p class="text-muted mb-4">Isi detail di bawah ini untuk membuat penawaran layanan Anda.</p>
 
                         <form method="POST" action="{{ route('gigs.store') }}" enctype="multipart/form-data">
                             @csrf
 
                             <!-- Title -->
                             <div class="mb-3">
-                                <label for="title" class="form-label">Gig Title <span
+                                <label for="title" class="form-label">Judul Layanan <span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('title') is-invalid @enderror"
-                                    id="title" name="title" value="{{ old('title') }}" placeholder="I will..."
+                                    id="title" name="title" value="{{ old('title') }}" placeholder="Saya akan..."
                                     required>
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -28,11 +28,11 @@
 
                             <!-- Category -->
                             <div class="mb-3">
-                                <label for="category_id" class="form-label">Category <span
+                                <label for="category_id" class="form-label">Kategori <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select @error('category_id') is-invalid @enderror" id="category_id"
                                     name="category_id" required>
-                                    <option value="">Select a category</option>
+                                    <option value="">Pilih kategori</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
                                             {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -47,11 +47,11 @@
 
                             <!-- Description -->
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description <span
+                                <label for="description" class="form-label">Deskripsi <span
                                         class="text-danger">*</span></label>
                                 <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
                                     rows="6" required>{{ old('description') }}</textarea>
-                                <div class="form-text">Describe what you're offering and what buyers will receive</div>
+                                <div class="form-text">Jelaskan apa yang Anda tawarkan dan apa yang akan diterima pembeli</div>
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -60,7 +60,7 @@
                             <!-- Price Range -->
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="min_price" class="form-label">Minimum Price ($) <span
+                                    <label for="min_price" class="form-label">Harga Minimum (Rp) <span
                                             class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('min_price') is-invalid @enderror"
                                         id="min_price" name="min_price" value="{{ old('min_price') }}" min="5"
@@ -70,11 +70,11 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="max_price" class="form-label">Maximum Price ($)</label>
+                                    <label for="max_price" class="form-label">Harga Maksimum (Rp)</label>
                                     <input type="number" class="form-control @error('max_price') is-invalid @enderror"
                                         id="max_price" name="max_price" value="{{ old('max_price') }}" min="5"
                                         step="0.01">
-                                    <div class="form-text">Leave empty if price is fixed</div>
+                                    <div class="form-text">Kosongkan jika harga tetap</div>
                                     @error('max_price')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -83,15 +83,15 @@
 
                             <!-- Delivery Time -->
                             <div class="mb-3">
-                                <label for="delivery_days" class="form-label">Delivery Time (Days) <span
+                                <label for="delivery_days" class="form-label">Waktu Pengiriman (Hari) <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select @error('delivery_days') is-invalid @enderror" id="delivery_days"
                                     name="delivery_days" required>
-                                    <option value="">Select delivery time</option>
+                                    <option value="">Pilih waktu pengiriman</option>
                                     @foreach ($deliveryPresets as $days)
                                         <option value="{{ $days }}"
                                             {{ old('delivery_days') == $days ? 'selected' : '' }}>
-                                            {{ $days }} {{ $days == 1 ? 'day' : 'days' }}
+                                            {{ $days }} {{ $days == 1 ? 'hari' : 'hari' }}
                                         </option>
                                     @endforeach
                                     <option value="custom"
@@ -113,18 +113,17 @@
                                         name="allows_tutoring" value="1"
                                         {{ old('allows_tutoring') ? 'checked' : '' }}>
                                     <label class="form-check-label" for="allows_tutoring">
-                                        I offer tutoring sessions for this service
+                                        Saya menawarkan sesi bimbingan untuk layanan ini
                                     </label>
                                 </div>
                             </div>
 
                             <!-- Images -->
                             <div class="mb-3">
-                                <label for="images" class="form-label">Gig Images</label>
+                                <label for="images" class="form-label">Gambar Layanan</label>
                                 <input type="file" class="form-control @error('images.*') is-invalid @enderror"
                                     id="images" name="images[]" accept="image/*" multiple>
-                                <div class="form-text">Upload up to 5 images (max 2MB each). Leave empty to use default
-                                    placeholder.</div>
+                                <div class="form-text">Unggah hingga 5 gambar (maks 2MB setiap gambar). Kosongkan untuk menggunakan placeholder default.</div>
                                 @error('images.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -132,18 +131,18 @@
 
                             <!-- Attachments -->
                             <div class="mb-4">
-                                <label for="attachments" class="form-label">Portfolio Attachments</label>
+                                <label for="attachments" class="form-label">Lampiran Portofolio</label>
                                 <input type="file" class="form-control @error('attachments.*') is-invalid @enderror"
                                     id="attachments" name="attachments[]" accept=".pdf,.jpg,.jpeg,.png" multiple>
-                                <div class="form-text">Upload portfolio files (PDF or images, max 5MB each)</div>
+                                <div class="form-text">Unggah file portofolio (PDF atau gambar, maks 5MB setiap file)</div>
                                 @error('attachments.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="d-flex gap-3">
-                                <button type="submit" class="btn btn-primary">Create Gig</button>
-                                <a href="{{ route('seller.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Buat Layanan</button>
+                                <a href="{{ route('seller.dashboard') }}" class="btn btn-outline-secondary">Batal</a>
                             </div>
                         </form>
                     </div>

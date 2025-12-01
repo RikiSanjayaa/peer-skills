@@ -18,7 +18,7 @@
                                 </div>
                                 <h3 class="fw-bold mb-3">Pengajuan Sedang Diproses</h3>
                                 <p class="text-muted mb-4">
-                                    Pengajuan seller Anda sedang ditinjau oleh tim kami.
+                                    Pengajuan penjual Anda sedang ditinjau oleh tim kami.
                                     Proses verifikasi biasanya memakan waktu 1-3 hari kerja.
                                 </p>
 
@@ -57,7 +57,7 @@
                                 </div>
                                 <h3 class="fw-bold mb-3">Pengajuan Ditolak</h3>
                                 <p class="text-muted mb-4">
-                                    Maaf, pengajuan seller Anda tidak dapat disetujui.
+                                    Maaf, pengajuan penjual Anda tidak dapat disetujui.
                                     Silakan baca alasan penolakan di bawah ini.
                                 </p>
 
