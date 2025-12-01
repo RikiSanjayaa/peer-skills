@@ -12,7 +12,7 @@
         <div class="card mb-4">
             <div class="card-body">
                 <div class="d-flex flex-wrap gap-3 align-items-center">
-                    <span class="text-muted">View as:</span>
+                    <span class="text-muted">Tampilkan sebagai:</span>
                     <div class="btn-group" role="group">
                         <a href="{{ route('orders.index', ['role' => 'buyer', 'filter' => $filter]) }}"
                             class="btn {{ $role === 'buyer' ? 'btn-primary' : 'btn-outline-primary' }}">

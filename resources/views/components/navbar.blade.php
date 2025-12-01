@@ -27,23 +27,23 @@
                         <li class="nav-item">
                             <a class="nav-link {{ $currentRoute === 'admin.dashboard' ? 'active' : '' }}"
                                 href="{{ route('admin.dashboard') }}">
-                                Dashboard Admin
+                                Dasbor Admin
                             </a>
                         </li>
                     @endif
                     <li class="nav-item">
-                        <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Home</a>
+                        <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Beranda</a>
                     </li>
                     @if (Auth::user()->role !== 'admin')
                         @if (Auth::user()->is_seller)
                             <li class="nav-item">
                                 <a class="nav-link {{ $currentRoute === 'seller.dashboard' ? 'active' : '' }}"
-                                    href="{{ route('seller.dashboard') }}">Dashboard Penjual</a>
+                                    href="{{ route('seller.dashboard') }}">Dasbor Penjual</a>
                             </li>
                         @else
                             <li class="nav-item">
                                 <a class="nav-link {{ $currentRoute === 'seller.register' ? 'active' : '' }}"
-                                    href="{{ route('seller.register') }}">Become a Seller</a>
+                                    href="{{ route('seller.register') }}">Menjadi Penjual</a>
                             </li>
                         @endif
                     @endif
@@ -63,19 +63,19 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile.show', Auth::user()) }}">
-                                    <i class="bi bi-person me-2"></i>My Profile
+                                    <i class="bi bi-person me-2"></i>Profil Saya
                                 </a>
                             </li>
                             @if (Auth::user()->role !== 'admin')
                                 <li>
                                     <a class="dropdown-item" href="{{ route('orders.index') }}">
-                                        <i class="bi bi-bag me-2"></i>My Orders
+                                        <i class="bi bi-bag me-2"></i>Pesanan Saya
                                     </a>
                                 </li>
                             @endif
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="bi bi-gear me-2"></i>Edit Profile
+                                    <i class="bi bi-gear me-2"></i>Ubah Profil
                                 </a>
                             </li>
                             <li>
@@ -85,7 +85,7 @@
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="dropdown-item text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        <i class="bi bi-box-arrow-right me-2"></i>Keluar
                                     </button>
                                 </form>
                             </li>
@@ -93,10 +93,10 @@
                     </li>
                 @else
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">Sign In</a>
+                        <a class="nav-link" href="{{ route('login') }}">Masuk</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="{{ route('register') }}" style="color: white;">Sign Up</a>
+                        <a class="btn btn-primary ms-2" href="{{ route('register') }}" style="color: white;">Daftar</a>
                     </li>
                 @endauth
             </ul>
