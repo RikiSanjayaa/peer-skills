@@ -49,7 +49,7 @@
                                         @endif
                                     </span>
                                     <span class="text-muted small ms-2">
-                                        <i class="bi bi-clock me-1"></i>{{ $gig->delivery_days }} days delivery
+                                        <i class="bi bi-clock me-1"></i>{{ $gig->delivery_days }} Durasi Pengerjaan (Hari)
                                     </span>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom">
                         <h4 class="mb-0">
-                            <i class="bi bi-cart-plus me-2"></i>Place Your Order
+                            <i class="bi bi-cart-plus me-2"></i>Buat Pesanan Anda
                         </h4>
                     </div>
                     <div class="card-body">
@@ -70,7 +70,7 @@
 
                             <!-- Order Type -->
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">Order Type</label>
+                                <label class="form-label fw-semibold">Tipe Pesanan</label>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-check card h-100">
@@ -80,10 +80,10 @@
                                                     onchange="toggleTutoringFields()">
                                                 <label class="form-check-label w-100" for="typeStandard">
                                                     <div class="fw-semibold">
-                                                        <i class="bi bi-file-earmark-text me-1"></i> Standard Order
+                                                        <i class="bi bi-file-earmark-text me-1"></i> Pesanan Standar
                                                     </div>
                                                     <small class="text-muted">
-                                                        Get deliverables (files, documents, designs, etc.)
+                                                        Menerima hasil kerja (file, dokumen, desain, dll.)
                                                     </small>
                                                 </label>
                                             </div>
@@ -99,10 +99,10 @@
                                                         onchange="toggleTutoringFields()">
                                                     <label class="form-check-label w-100" for="typeTutoring">
                                                         <div class="fw-semibold">
-                                                            <i class="bi bi-mortarboard me-1"></i> Tutoring Session
+                                                            <i class="bi bi-mortarboard me-1"></i> Sesi Bimbingan
                                                         </div>
                                                         <small class="text-muted">
-                                                            Schedule a live tutoring/mentoring session
+                                                            Jadwalkan sesi bimbingan/mentoring secara langsung
                                                         </small>
                                                     </label>
                                                 </div>
@@ -118,7 +118,7 @@
                             <!-- Requirements -->
                             <div class="mb-4">
                                 <label for="requirements" class="form-label fw-semibold">
-                                    What do you need?
+                                    Apa yang Anda butuhkan?
                                     <span class="text-danger">*</span>
                                 </label>
                                 <textarea class="form-control @error('requirements') is-invalid @enderror" id="requirements" name="requirements"
@@ -135,7 +135,7 @@
                                 @enderror
                                 <div class="form-text">
                                     <i class="bi bi-info-circle me-1"></i>
-                                    Be as detailed as possible. The seller will set a price based on your requirements.
+                                    Berikan detail selengkap mungkin. Penjual akan menentukan harga berdasarkan kebutuhan Anda.
                                 </div>
                             </div>
 
@@ -143,12 +143,12 @@
                             <div id="tutoringFields" style="display: none;">
                                 <hr class="my-4">
                                 <h5 class="mb-3">
-                                    <i class="bi bi-calendar-event me-2"></i>Tutoring Schedule
+                                    <i class="bi bi-calendar-event me-2"></i>Jadwal Bimbingan
                                 </h5>
 
                                 <!-- Topic -->
                                 <div class="mb-4">
-                                    <label for="topic" class="form-label fw-semibold">Topic/Subject</label>
+                                    <label for="topic" class="form-label fw-semibold">Topik/Subjek</label>
                                     <input type="text" class="form-control @error('topic') is-invalid @enderror"
                                         id="topic" name="topic"
                                         placeholder="e.g., Data Structures, Calculus, JavaScript basics..."
@@ -158,10 +158,10 @@
                                     @enderror
                                 </div>
 
-                                <!-- Proposed Time Slots -->
+                                <!-- Proposed Time Slots --> 
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold">
-                                        Preferred Time Slots
+                                        Slot Waktu Pilihan
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div id="slotsContainer">
@@ -175,13 +175,13 @@
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addSlot()">
-                                        <i class="bi bi-plus me-1"></i>Add Another Slot
+                                        <i class="bi bi-plus me-1"></i>Tambahkan Slot Lain
                                     </button>
                                     @error('proposed_slots')
                                         <div class="text-danger small mt-1">{{ $message }}</div>
                                     @enderror
                                     <div class="form-text">
-                                        Suggest multiple time slots so the seller can pick one that works.
+                                        Sarankan beberapa slot waktu agar Penjual dapat memilih salah satu yang sesuai.
                                     </div>
                                 </div>
                             </div>
@@ -192,11 +192,10 @@
                             <div class="alert alert-info d-flex align-items-start">
                                 <i class="bi bi-info-circle-fill me-2 mt-1"></i>
                                 <div>
-                                    <strong>How pricing works:</strong>
+                                    <strong>Cara kerja penentuan harga:</strong>
                                     <p class="mb-0 small">
-                                        After you submit this order, the seller will review your requirements and send you a
-                                        quote.
-                                        You can then accept or decline the quote. No payment is required until you accept.
+                                        Setelah Anda mengirimkan pesanan ini, Penjual akan meninjau kebutuhan Anda dan mengirimkan penawaran harga.
+                                        Anda kemudian dapat menerima atau menolak penawaran harga tersebut. Pembayaran tidak diperlukan sampai Anda menerima.
                                     </p>
                                 </div>
                             </div>
@@ -204,10 +203,10 @@
                             <!-- Submit Button -->
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-send me-2"></i>Submit Order Request
+                                    <i class="bi bi-send me-2"></i>Kirim Permintaan Pesanan
                                 </button>
                                 <a href="{{ route('gigs.show', $gig) }}" class="btn btn-outline-secondary">
-                                    Cancel
+                                    Batal
                                 </a>
                             </div>
                         </form>
