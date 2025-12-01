@@ -78,6 +78,12 @@ class Order extends Model
         return $this->hasOne(TutoringSchedule::class);
     }
 
+    // Relasi chat messages (BARU)
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
     /**
      * Scopes
      */

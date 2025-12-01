@@ -199,6 +199,9 @@
                             Obrolan dengan {{ $isBuyer ? 'Seller' : 'Buyer' }} (Segera Hadir)
                         </button>
                     </div>
+
+                </div>
+                <div class="col-lg-4">
                 </div>
             </div>
 
@@ -244,8 +247,7 @@
                             @endif
 
                             @if ($order->canBeDelivered())
-                                <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#deliverModal">
+                                <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal" data-bs-target="#deliverModal">
                                     @if ($order->isTutoring())
                                         <i class="bi bi-check-circle me-1"></i>Tandai Sesi Selesai
                                     @else
@@ -470,8 +472,7 @@
                             </div>
                         </form>
                     @else
-                        <form action="{{ route('orders.deliver', $order) }}" method="POST"
-                            enctype="multipart/form-data">
+                        <form action="{{ route('orders.deliver', $order) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-header">
                                 <h5 class="modal-title">Kirim Hasil</h5>
@@ -489,8 +490,7 @@
                                     <div class="form-text">Maksimal 50MB</div>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="is_final" value="1"
-                                        id="isFinal">
+                                    <input type="checkbox" class="form-check-input" name="is_final" value="1" id="isFinal">
                                     <label class="form-check-label" for="isFinal">
                                         delivery	Ini adalah pengiriman akhir
                                     </label>
@@ -562,4 +562,121 @@
             </div>
         </div>
     @endif
+
+    {{-- Cath Skrip --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const orderId = "{{ $order->id }}";
+            const chatBox = document.getElementById('chat-box');
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const currentUserId = {{ auth()->id() }};
+
+            // Fungsi scroll ke bawah otomatis
+            function scrollToBottom() {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            function fetchMessages() {
+                fetch(`/orders/${orderId}/chat`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Simpan posisi scroll agar tidak loncat saat user membaca chat lama
+                        const isScrolledToBottom = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 150;
+
+                        chatBox.innerHTML = '';
+
+                        if (data.length === 0) {
+                            chatBox.innerHTML = `
+                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                        <div class="text-center">
+                                            <i class="bi bi-chat-square-text fs-1 opacity-25"></i>
+                                            <p class="small mt-2">Belum ada pesan. Mulai diskusi!</p>
+                                        </div>
+                                    </div>`;
+                            return;
+                        }
+
+                        data.forEach(msg => {
+                            const isMe = msg.user_id === currentUserId;
+
+                            const alignClass = isMe ? 'align-self-end' : 'align-self-start';
+                            const bubbleColor = isMe ? 'bg-primary text-white' : 'bg-white text-dark border';
+                            const userLabel = isMe ? 'Anda' : msg.user.name;
+                            const metaAlign = isMe ? 'text-end' : 'text-start';
+
+                            const bubble = `
+                                    <div class="d-flex flex-column ${alignClass}" style="max-width: 80%; min-width: 30%;">
+                                        <div class="d-flex justify-content-between align-items-end mb-1 px-1">
+                                            <small class="fw-bold ${isMe ? 'text-primary' : 'text-dark'}" style="font-size: 0.75rem;">${userLabel}</small>
+                                        </div>
+                                        <div class="p-3 rounded-3 shadow-sm ${bubbleColor}" style="word-wrap: break-word;">
+                                            ${msg.message}
+                                        </div>
+                                        <small class="text-muted mt-1 ${metaAlign}" style="font-size: 0.70rem;">
+                                            ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </small>
+                                    </div>
+                                `;
+                            chatBox.insertAdjacentHTML('beforeend', bubble);
+                        });
+
+                        // Scroll ke bawah hanya jika user sedang di bawah
+                        if (isScrolledToBottom) {
+                            scrollToBottom();
+                        }
+                    })
+                    .catch(error => console.error('Error fetching chat:', error));
+            }
+
+            // Load pesan pertama kali
+            fetchMessages();
+
+            // Auto-refresh chat setiap 3 detik
+            setInterval(fetchMessages, 3000);
+
+            // Kirim Pesan
+            chatForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const message = messageInput.value;
+                if (!message.trim()) return;
+
+                const oldMessage = messageInput.value;
+                messageInput.value = '';
+
+                // Loading state tombol
+                const btn = chatForm.querySelector('button');
+                const originalBtnHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                fetch(`/orders/${orderId}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Gagal mengirim');
+                        return response.json();
+                    })
+                    .then(() => {
+                        fetchMessages();
+                        setTimeout(scrollToBottom, 300); // Paksa scroll setelah kirim
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Gagal mengirim pesan.');
+                        messageInput.value = oldMessage;
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalBtnHtml;
+                        messageInput.focus();
+                    });
+            });
+        });
+    </script>
 @endsection
