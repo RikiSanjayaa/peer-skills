@@ -16,8 +16,12 @@
                             <!-- Search -->
                             <div class="mb-3 position-relative">
                                 <label for="search" class="form-label fw-bold">Search</label>
+                                {{-- PERBAIKAN: Cek 'search' atau 'query' agar input terisi otomatis --}}
                                 <input type="text" class="form-control" id="search" name="search"
-                                    placeholder="Search gigs..." value="{{ request('search') }}" autocomplete="off">
+                                    placeholder="Search gigs..." 
+                                    value="{{ request('search') ?? request('query') }}" 
+                                    autocomplete="off">
+                                    
                                 <div id="searchSuggestions"
                                     class="position-absolute w-100 bg-white border rounded shadow-sm"
                                     style="display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>

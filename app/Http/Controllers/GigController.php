@@ -20,20 +20,26 @@ class GigController extends Controller
      */
     public function index(Request $request)
     {
+        // 1. Ambil semua kategori untuk filter dropdown
+        $categories = Category::all(); 
+
+        // 2. Query untuk mengambil Gigs
         $query = Gig::with(['seller.user', 'category']);
 
-        // Search by title or description
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+        // Logika Pencarian (Search)
+        $searchTerm = $request->input('query') ?? $request->input('search');
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
             });
         }
 
         // Filter by category
         if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('slug', $request->category); // Sesuaikan dengan kolom slug/id
+            });
         }
 
         // Filter by price range
@@ -49,22 +55,13 @@ class GigController extends Controller
             $query->where('delivery_days', '<=', $request->delivery_days);
         }
 
-        // Filter by tutoring availability
-        if ($request->filled('tutoring') && $request->tutoring == '1') {
-            $query->where('allows_tutoring', true);
-        }
-
-        // Sort
-        $sortBy = $request->get('sort', 'latest');
-        switch ($sortBy) {
-            case 'price_low':
+        // Sort options
+        switch ($request->sort) {
+            case 'price_asc':
                 $query->orderBy('min_price', 'asc');
                 break;
-            case 'price_high':
+            case 'price_desc':
                 $query->orderBy('min_price', 'desc');
-                break;
-            case 'delivery':
-                $query->orderBy('delivery_days', 'asc');
                 break;
             default:
                 $query->latest();
@@ -72,8 +69,8 @@ class GigController extends Controller
         }
 
         $gigs = $query->paginate(12)->withQueryString();
-        $categories = Category::orderBy('name')->get();
 
+        // 3. KIRIM $categories KE VIEW (Ini yang sebelumnya kurang)
         return view('gigs.index', compact('gigs', 'categories'));
     }
 

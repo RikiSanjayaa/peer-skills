@@ -20,7 +20,7 @@
     <div id="app">
         @include('components.navbar')
 
-        <div class="container mt-4 mb-2">
+        <div class="container mb-2">
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
                     <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
