@@ -60,18 +60,18 @@
                                             Manage
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="{{ route('gigs.edit', $gig) }}">Edit Gig</a>
+                                            <li><a class="dropdown-item" href="{{ route('gigs.edit', $gig) }}">Edit Layanan</a>
                                             </li>
                                             <li>
                                                 <hr class="dropdown-divider">
                                             </li>
                                             <li>
                                                 <form method="POST" action="{{ route('gigs.destroy', $gig) }}"
-                                                    onsubmit="return confirm('Are you sure you want to delete this gig?');">
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus layanan ini?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="dropdown-item text-danger">Delete
-                                                        Gig</button>
+                                                    <button type="submit" class="dropdown-item text-danger">Hapus
+                                                        Layanan</button>
                                                 </form>
                                             </li>
                                         </ul>
@@ -81,13 +81,13 @@
                         </div>
 
                         <div class="mb-4">
-                            <h5>About This Gig</h5>
+                            <h5>Tentang Layanan Ini</h5>
                             <p class="text-muted" style="white-space: pre-line;">{{ $gig->description }}</p>
                         </div>
 
                         @if ($gig->attachments && count($gig->attachments) > 0)
                             <div class="mb-4">
-                                <h5>Portfolio Attachments</h5>
+                                <h5>Lampiran Portofolio</h5>
                                 <div class="list-group">
                                     @foreach ($gig->attachments as $attachment)
                                         <a href="{{ asset('storage/' . $attachment['path']) }}" target="_blank"
@@ -105,7 +105,7 @@
                 <!-- Seller Info -->
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="mb-3">About the Seller</h5>
+                        <h5 class="mb-3">Tentang Penjual</h5>
                         <a href="{{ route('profile.show', $gig->seller->user) }}" class="text-decoration-none">
                             <div class="d-flex align-items-center mb-3">
                                 @if ($gig->seller->user->avatar)
@@ -126,20 +126,20 @@
                         <p class="text-muted mb-2">{{ $gig->seller->description }}</p>
                         <div class="row text-muted small">
                             <div class="col-6">
-                                <strong>Education:</strong> {{ $gig->seller->major }}<br>
-                                <strong>University:</strong> {{ $gig->seller->university }}
+                                <strong>Pendidikan:</strong> {{ $gig->seller->major }}<br>
+                                <strong>Universitas:</strong> {{ $gig->seller->university }}
                             </div>
                             <div class="col-6">
                                 @if ($gig->seller->portfolio_url)
-                                    <strong>Portfolio:</strong> <a href="{{ $gig->seller->portfolio_url }}"
-                                        target="_blank">View</a>
+                                    <strong>Portofolio:</strong> <a href="{{ $gig->seller->portfolio_url }}"
+                                        target="_blank">Lihat</a>
                                 @endif
                             </div>
                         </div>
                         <div class="mt-3">
                             <a href="{{ route('profile.show', $gig->seller->user) }}"
                                 class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-person"></i> View Profile
+                                <i class="bi bi-person"></i> Lihat Profil
                             </a>
                         </div>
                     </div>
@@ -161,9 +161,9 @@
                             </h4>
                             <small class="text-muted">
                                 @if ($gig->max_price)
-                                    Price range (negotiable based on requirements)
+                                    Kisaran harga (negosiasi berdasarkan kebutuhan)
                                 @else
-                                    Fixed price
+                                    Harga tetap
                                 @endif
                             </small>
                         </div>
@@ -172,14 +172,14 @@
 
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">
-                                <span><i class="bi bi-clock"></i> Delivery Time:</span>
+                                <span><i class="bi bi-clock"></i> Waktu Pengiriman:</span>
                                 <strong>{{ $gig->delivery_days }}
-                                    {{ $gig->delivery_days == 1 ? 'day' : 'days' }}</strong>
+                                    {{ $gig->delivery_days == 1 ? 'hari' : 'hari' }}</strong>
                             </div>
                             @if ($gig->allows_tutoring)
                                 <div class="d-flex justify-content-between">
-                                    <span><i class="bi bi-mortarboard"></i> Tutoring:</span>
-                                    <strong class="text-success">Available</strong>
+                                    <span><i class="bi bi-mortarboard"></i> Bimbingan/Pelatihan:</span>
+                                    <strong class="text-success">Tersedia</strong>
                                 </div>
                             @endif
                         </div>
@@ -189,22 +189,22 @@
                         @auth
                             @if (Auth::user()->is_seller && $gig->seller_id === Auth::user()->seller->id)
                                 <div class="alert alert-info small mb-0">
-                                    This is your gig. Buyers will see the order button here.
+                                    Ini adalah gig Anda. Pembeli akan melihat tombol pemesanan di sini.
                                 </div>
                             @else
                                 <a href="{{ route('orders.create', $gig) }}" class="btn btn-primary w-100 mb-2">
-                                    <i class="bi bi-cart-plus me-1"></i> Order Now
+                                    <i class="bi bi-cart-plus me-1"></i> Pesan Sekarang
                                 </a>
                                 @if ($gig->allows_tutoring)
                                     <a href="{{ route('orders.create', $gig) }}?type=tutoring"
                                         class="btn btn-outline-primary w-100">
-                                        <i class="bi bi-mortarboard me-1"></i> Book Tutoring
+                                        <i class="bi bi-mortarboard me-1"></i> Pesan Bimbingan/Pelatihan
                                     </a>
                                 @endif
                             @endif
                         @else
                             <a href="{{ route('login') }}" class="btn btn-primary w-100 mb-2">
-                                Login to Order
+                                Masuk untuk Memesan
                             </a>
                         @endauth
                     </div>

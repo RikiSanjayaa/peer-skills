@@ -11,6 +11,11 @@
     border-color: var(--peerskill-primary) !important;
 }
 
+/* Terapkan font Poppins ke seluruh website */
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {

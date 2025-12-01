@@ -8,9 +8,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="{{ asset('images/PeerSkill.jpg') }}" alt="PeerSkill" height="50" class="me-2">
-        </a>
+        <a href="{{ url('/') }}" class="navbar-brand">
+    {{-- BARIS INI MENAMPILKAN GAMBAR LOGO --}}
+    <img src="{{ asset('images/logo.jpeg') }}" alt="PeerSkill Logo" height="50" class="me-2">
+    
+    {{-- BARIS INI MENAMPILKAN TEKS PEERSKILL --}}
+    PeerSkill
+</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -23,23 +27,23 @@
                         <li class="nav-item">
                             <a class="nav-link {{ $currentRoute === 'admin.dashboard' ? 'active' : '' }}"
                                 href="{{ route('admin.dashboard') }}">
-                                Admin Dashboard
+                                Dasbor Admin
                             </a>
                         </li>
                     @endif
                     <li class="nav-item">
-                        <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Home</a>
+                        <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Beranda</a>
                     </li>
                     @if (Auth::user()->role !== 'admin')
                         @if (Auth::user()->is_seller)
                             <li class="nav-item">
                                 <a class="nav-link {{ $currentRoute === 'seller.dashboard' ? 'active' : '' }}"
-                                    href="{{ route('seller.dashboard') }}">Seller Dashboard</a>
+                                    href="{{ route('seller.dashboard') }}">Dasbor Penjual</a>
                             </li>
                         @else
                             <li class="nav-item">
                                 <a class="nav-link {{ $currentRoute === 'seller.register' ? 'active' : '' }}"
-                                    href="{{ route('seller.register') }}">Become a Seller</a>
+                                    href="{{ route('seller.register') }}">Menjadi Penjual</a>
                             </li>
                         @endif
                     @endif
@@ -59,19 +63,19 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile.show', Auth::user()) }}">
-                                    <i class="bi bi-person me-2"></i>My Profile
+                                    <i class="bi bi-person me-2"></i>Profil Saya
                                 </a>
                             </li>
                             @if (Auth::user()->role !== 'admin')
                                 <li>
                                     <a class="dropdown-item" href="{{ route('orders.index') }}">
-                                        <i class="bi bi-bag me-2"></i>My Orders
+                                        <i class="bi bi-bag me-2"></i>Pesanan Saya
                                     </a>
                                 </li>
                             @endif
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="bi bi-gear me-2"></i>Edit Profile
+                                    <i class="bi bi-gear me-2"></i>Ubah Profil
                                 </a>
                             </li>
                             <li>
@@ -81,7 +85,7 @@
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="dropdown-item text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        <i class="bi bi-box-arrow-right me-2"></i>Keluar
                                     </button>
                                 </form>
                             </li>
@@ -89,10 +93,10 @@
                     </li>
                 @else
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">Sign In</a>
+                        <a class="nav-link" href="{{ route('login') }}">Masuk</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="{{ route('register') }}" style="color: white;">Sign Up</a>
+                        <a class="btn btn-primary ms-2" href="{{ route('register') }}" style="color: white;">Daftar</a>
                     </li>
                 @endauth
             </ul>

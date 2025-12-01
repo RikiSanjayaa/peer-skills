@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h4 class="text-center mb-4">Sign In to PeerSkill</h4>
+    <h4 class="text-center mb-4">Masuk ke PeerSkill</h4>
 
     <!-- Session Status -->
     @if (session('status'))
@@ -23,7 +23,7 @@
 
         <!-- Password -->
         <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label">Kata Sandi</label>
             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
                 name="password" required autocomplete="current-password">
             @error('password')
@@ -35,24 +35,24 @@
         <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="remember_me" name="remember">
             <label class="form-check-label" for="remember_me">
-                Remember me
+                Ingat saya
             </label>
         </div>
 
         <div class="d-grid gap-2 mb-3">
             <button type="submit" class="btn btn-primary">
-                Sign In
+                Masuk
             </button>
         </div>
 
         <div class="d-flex justify-content-between align-items-center">
             @if (Route::has('password.request'))
                 <a class="text-decoration-none small" href="{{ route('password.request') }}" style="color: #00BCD4;">
-                    Forgot password?
+                    Lupa kata sandi?
                 </a>
             @endif
             <a class="text-decoration-none small" href="{{ route('register') }}" style="color: #00BCD4;">
-                Create account
+                Buat akun
             </a>
         </div>
     </form>
