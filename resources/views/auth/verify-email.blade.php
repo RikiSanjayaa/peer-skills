@@ -1,14 +1,13 @@
 <x-guest-layout>
-    <h4 class="text-center mb-3">Verify Email</h4>
+    <h4 class="text-center mb-3">Verifikasi Email</h4>
 
     <p class="text-muted small mb-4">
-        Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we
-        just emailed to you?
+        Terima kasih telah mendaftar! Sebelum memulai, bisakah Anda memverifikasi alamat email Anda dengan mengklik tautan yang baru saja kami kirimkan ke email Anda?
     </p>
 
     @if (session('status') == 'verification-link-sent')
         <div class="alert alert-success" role="alert">
-            A new verification link has been sent to the email address you provided during registration.
+            Tautan verifikasi baru telah dikirim ke alamat email yang Anda berikan saat pendaftaran.
         </div>
     @endif
 
@@ -16,14 +15,14 @@
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
             <button type="submit" class="btn btn-primary">
-                Resend Verification Email
+                Kirim Ulang Email Verifikasi
             </button>
         </form>
 
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="btn btn-link text-decoration-none small" style="color: #00BCD4;">
-                Log Out
+                Keluar
             </button>
         </form>
     </div>

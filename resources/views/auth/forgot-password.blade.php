@@ -1,8 +1,8 @@
 <x-guest-layout>
-    <h4 class="text-center mb-3">Forgot Password?</h4>
+    <h4 class="text-center mb-3">Lupa Kata Sandi?</h4>
 
     <p class="text-muted small text-center mb-4">
-        No problem. Just let us know your email address and we will email you a password reset link.
+        Tidak masalah. Beri tahu kami alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda.
     </p>
 
     <!-- Session Status -->
@@ -27,13 +27,13 @@
 
         <div class="d-grid gap-2">
             <button type="submit" class="btn btn-primary">
-                Email Password Reset Link
+                Email Tautan Reset Kata Sandi
             </button>
         </div>
 
         <div class="text-center mt-3">
             <a class="text-decoration-none small" href="{{ route('login') }}" style="color: #00BCD4;">
-                Back to sign in
+                Kembali ke masuk
             </a>
         </div>
     </form>

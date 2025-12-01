@@ -24,7 +24,7 @@
 
                             <!-- Banner Preview & Upload -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Banner Image</label>
+                                <label class="form-label fw-bold">Gambar Banner</label>
                                 <div class="position-relative mb-3"
                                     style="height: 150px; background: linear-gradient(135deg, #00BCD4, #00ACC1); border-radius: 8px; overflow: hidden;">
                                     @if ($user->banner)
@@ -47,7 +47,7 @@
                                         </button>
                                     @endif
                                 </div>
-                                <div class="form-text">Recommended size: 1200x300 pixels (max 4MB)</div>
+                                <div class="form-text">Ukuran yang disarankan: 1200x300 piksel (maks 4MB)</div>
                                 @error('banner')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -55,7 +55,7 @@
 
                             <!-- Avatar Preview & Upload -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Profile Picture</label>
+                                <label class="form-label fw-bold">Foto Profil</label>
                                 <div class="d-flex align-items-center gap-3 mb-3">
                                     @if ($user->avatar)
                                         <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="rounded-circle"
@@ -70,7 +70,7 @@
                                     <div class="flex-grow-1">
                                         <input type="file" class="form-control @error('avatar') is-invalid @enderror"
                                             id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
-                                        <div class="form-text">Square image recommended (max 2MB)</div>
+                                        <div class="form-text">Rekomendasi gambar persegi (maks 2MB)</div>
                                         @error('avatar')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -89,7 +89,7 @@
                             <!-- Basic Info -->
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="name" class="form-label fw-bold">Name <span
+                                    <label for="name" class="form-label fw-bold">Nama <span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
                                         id="name" name="name" value="{{ old('name', $user->name) }}" required>
@@ -109,7 +109,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="phone" class="form-label fw-bold">Phone Number</label>
+                                <label for="phone" class="form-label fw-bold">Nomor Telepon</label>
                                 <input type="tel" class="form-control @error('phone') is-invalid @enderror"
                                     id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
                                     placeholder="+1 234 567 8900">
@@ -119,10 +119,10 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="bio" class="form-label fw-bold">About Me</label>
+                                <label for="bio" class="form-label fw-bold">Tentang Saya</label>
                                 <textarea class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio" rows="4"
-                                    placeholder="Tell others about yourself...">{{ old('bio', $user->bio) }}</textarea>
-                                <div class="form-text">Max 1000 characters</div>
+                                    placeholder="Ceritakan tentang diri Anda...">{{ old('bio', $user->bio) }}</textarea>
+                                <div class="form-text">Maks 1000 karakter</div>
                                 @error('bio')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -132,7 +132,7 @@
 
                             <!-- Social Links -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Social Links</label>
+                                <label class="form-label fw-bold">Tautan Sosial</label>
                                 <div id="socialLinksContainer">
                                     @if ($user->social_links && count($user->social_links) > 0)
                                         @foreach ($user->social_links as $index => $link)
@@ -178,16 +178,16 @@
                                 </div>
                                 <button type="button" class="btn btn-outline-primary btn-sm mt-2"
                                     onclick="addSocialLink()">
-                                    <i class="bi bi-plus"></i> Add Social Link
+                                    <i class="bi bi-plus"></i> Tambah Tautan Sosial
                                 </button>
                             </div>
 
                             <div class="d-flex gap-3">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-lg"></i> Save Changes
+                                    <i class="bi bi-check-lg"></i> Simpan Perubahan
                                 </button>
                                 <a href="{{ route('profile.show', $user) }}" class="btn btn-outline-secondary">
-                                    View Profile
+                                    Lihat Profil
                                 </a>
                             </div>
                         </form>
@@ -197,13 +197,13 @@
                 <!-- Danger Zone -->
                 <div class="card shadow-sm border-danger">
                     <div class="card-header bg-danger text-white">
-                        <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>
+                        <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Zona Berbahaya</h5>
                     </div>
                     <div class="card-body">
-                        <p class="text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+                        <p class="text-muted">Setelah Anda menghapus akun, tidak ada jalan kembali. Harap pastikan.</p>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                             data-bs-target="#deleteAccountModal">
-                            <i class="bi bi-trash"></i> Delete Account
+                            <i class="bi bi-trash"></i> Hapus Akun
                         </button>
                     </div>
                 </div>
@@ -216,18 +216,18 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Remove Profile Picture</h5>
+                    <h5 class="modal-title">Hapus Foto Profil</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to remove your profile picture?
+                    Apakah Anda yakin ingin menghapus foto profil Anda?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <form method="POST" action="{{ route('profile.avatar.remove') }}">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Remove</button>
+                        <button type="submit" class="btn btn-danger">Hapus</button>
                     </form>
                 </div>
             </div>
@@ -239,18 +239,18 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Remove Banner</h5>
+                    <h5 class="modal-title">Hapus Banner</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to remove your banner image?
+                    Apakah Anda yakin ingin menghapus gambar banner Anda?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <form method="POST" action="{{ route('profile.banner.remove') }}">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Remove</button>
+                        <button type="submit" class="btn btn-danger">Hapus</button>
                     </form>
                 </div>
             </div>
@@ -262,20 +262,20 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Delete Account</h5>
+                    <h5 class="modal-title">Hapus Akun</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST" action="{{ route('profile.destroy') }}">
                     @csrf
                     @method('DELETE')
                     <div class="modal-body">
-                        <p class="text-danger fw-bold">This action cannot be undone!</p>
-                        <p>Please enter your password to confirm you want to delete your account:</p>
-                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        <p class="text-danger fw-bold">Tindakan ini tidak dapat dibatalkan!</p>
+                        <p>Masukkan kata sandi Anda untuk mengonfirmasi bahwa Anda ingin menghapus akun Anda:</p>
+                        <input type="password" class="form-control" name="password" placeholder="Kata Sandi" required>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Delete My Account</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Hapus Akun Saya</button>
                     </div>
                 </form>
             </div>
