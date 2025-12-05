@@ -134,7 +134,7 @@
                                 <label for="attachments" class="form-label">Lampiran Portofolio</label>
                                 <input type="file" class="form-control @error('attachments.*') is-invalid @enderror"
                                     id="attachments" name="attachments[]" accept=".pdf,.jpg,.jpeg,.png" multiple>
-                                <div class="form-text">Unggah file portofolio (PDF atau gambar, maks 5MB setiap file)</div>
+                                <div class="form-text">Unggah file portofolio (PDF atau gambar, maks 2MB setiap file)</div>
                                 @error('attachments.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

@@ -147,7 +147,12 @@ class GigController extends Controller
             'delivery_days' => 'required|integer|min:1|max:365',
             'allows_tutoring' => 'boolean',
             'images.*' => 'nullable|image|max:2048',
-            'attachments.*' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
+            'attachments.*' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
+        ], [
+            'images.*.image' => 'File harus berupa gambar (JPG, PNG, GIF).',
+            'images.*.max' => 'Ukuran gambar terlalu besar. Maksimal 2MB per file.',
+            'attachments.*.mimes' => 'Format file tidak didukung. Gunakan PDF, JPG, atau PNG.',
+            'attachments.*.max' => 'Ukuran file terlalu besar. Maksimal 2MB per file.',
         ]);
 
         // Handle image uploads
@@ -238,9 +243,14 @@ class GigController extends Controller
             'delivery_days' => 'required|integer|min:1|max:365',
             'allows_tutoring' => 'boolean',
             'images.*' => 'nullable|image|max:2048',
-            'attachments.*' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
+            'attachments.*' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
             'remove_images' => 'nullable|array',
             'remove_attachments' => 'nullable|array',
+        ], [
+            'images.*.image' => 'File harus berupa gambar (JPG, PNG, GIF).',
+            'images.*.max' => 'Ukuran gambar terlalu besar. Maksimal 2MB per file.',
+            'attachments.*.mimes' => 'Format file tidak didukung. Gunakan PDF, JPG, atau PNG.',
+            'attachments.*.max' => 'Ukuran file terlalu besar. Maksimal 2MB per file.',
         ]);
 
         // Handle image removal

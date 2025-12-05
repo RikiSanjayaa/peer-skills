@@ -45,7 +45,7 @@
                                 </div>
 
                                 <a href="{{ route('home') }}" class="btn btn-outline-primary">
-                                    <i class="bi bi-arrow-left me-1"></i> Kembali ke Beranda
+                                    <i class="bi bi-arrow-left me-1"></i> Kembali ke Home
                                 </a>
                             @elseif($seller->isRejected())
                                 {{-- Rejected Status --}}

@@ -40,6 +40,7 @@
                                 <div class="d-flex gap-2">
                                     <input type="file" class="form-control @error('banner') is-invalid @enderror"
                                         id="banner" name="banner" accept="image/*" onchange="previewBanner(this)">
+                                    {{-- TODO: tambah opsi geser ke atas/bawah untuk banner yang sudah di preview --}}
                                     @if ($user->banner)
                                         <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
                                             data-bs-target="#removeBannerModal">
@@ -47,7 +48,8 @@
                                         </button>
                                     @endif
                                 </div>
-                                <div class="form-text">Ukuran yang disarankan: 1200x300 piksel (maks 4MB)</div>
+                                <div class="form-text">Ukuran yang disarankan: 1200x300 piksel (maks 2MB). Format: JPG, PNG,
+                                    GIF</div>
                                 @error('banner')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -70,7 +72,8 @@
                                     <div class="flex-grow-1">
                                         <input type="file" class="form-control @error('avatar') is-invalid @enderror"
                                             id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
-                                        <div class="form-text">Rekomendasi gambar persegi (maks 2MB)</div>
+                                        <div class="form-text">Rekomendasi gambar persegi (maks 2MB). Format: JPG, PNG, GIF
+                                        </div>
                                         @error('avatar')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

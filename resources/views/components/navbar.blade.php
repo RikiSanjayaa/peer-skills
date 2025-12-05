@@ -9,12 +9,12 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         <a href="{{ url('/') }}" class="navbar-brand">
-    {{-- BARIS INI MENAMPILKAN GAMBAR LOGO --}}
-    <img src="{{ asset('images/logo.jpeg') }}" alt="PeerSkill Logo" height="50" class="me-2">
-    
-    {{-- BARIS INI MENAMPILKAN TEKS PEERSKILL --}}
-    PeerSkill
-</a>
+            {{-- BARIS INI MENAMPILKAN GAMBAR LOGO --}}
+            <img src="{{ asset('images/PeerSkill.jpg') }}" alt="PeerSkill Logo" height="50" class="me-2">
+
+            {{-- BARIS INI MENAMPILKAN TEKS PEERSKILL --}}
+            <b>Peer<span style="color: #00BCD4;">S</span>kill</b>
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -32,7 +32,7 @@
                         </li>
                     @endif
                     <li class="nav-item">
-                        <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Beranda</a>
+                        <a class="nav-link {{ $currentRoute === 'home' ? 'active' : '' }}" href="/">Home</a>
                     </li>
                     @if (Auth::user()->role !== 'admin')
                         @if (Auth::user()->is_seller)

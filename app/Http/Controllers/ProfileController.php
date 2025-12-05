@@ -50,10 +50,17 @@ class ProfileController extends Controller
             'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string', 'max:1000'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'banner' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'],
+            'banner' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'social_links' => ['nullable', 'array'],
             'social_links.*.platform' => ['nullable', 'string', 'max:50'],
             'social_links.*.url' => ['nullable', 'url', 'max:255'],
+        ], [
+            'avatar.image' => 'Foto profil harus berupa gambar (JPG, PNG, GIF).',
+            'avatar.mimes' => 'Format foto profil tidak didukung. Gunakan JPG, PNG, atau GIF.',
+            'avatar.max' => 'Ukuran foto profil terlalu besar. Maksimal 2MB.',
+            'banner.image' => 'Banner harus berupa gambar (JPG, PNG, GIF).',
+            'banner.mimes' => 'Format banner tidak didukung. Gunakan JPG, PNG, atau GIF.',
+            'banner.max' => 'Ukuran banner terlalu besar. Maksimal 2MB.',
         ]);
 
         $user = $request->user();
