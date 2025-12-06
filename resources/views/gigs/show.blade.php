@@ -80,6 +80,17 @@
                             @endauth
                         </div>
 
+                        {{-- Rating Summary --}}
+                        @if ($gig->review_count > 0)
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>
+                                    <span class="fw-bold">{{ $gig->average_rating }}</span>
+                                </div>
+                                <span class="text-muted">({{ $gig->review_count }} ulasan)</span>
+                            </div>
+                        @endif
+
                         <div class="mb-4">
                             <h5>Tentang Layanan Ini</h5>
                             <p class="text-muted" style="white-space: pre-line;">{{ $gig->description }}</p>
@@ -144,6 +155,59 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Reviews Section --}}
+                @if ($gig->reviews->count() > 0)
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0"><i class="bi bi-star me-2"></i>Ulasan ({{ $gig->review_count }})</h5>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>
+                                    <span class="fw-bold">{{ $gig->average_rating }}</span>
+                                </div>
+                            </div>
+
+                            @foreach ($gig->reviews()->with('reviewer')->latest()->take(5)->get() as $review)
+                                <div class="border-bottom pb-3 mb-3">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                                            style="width: 40px; height: 40px; font-size: 0.9rem;">
+                                            {{ strtoupper(substr($review->reviewer->name, 0, 1)) }}
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1">{{ $review->reviewer->name }}</h6>
+                                                    <div class="mb-2">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <i class="bi bi-star-fill {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"
+                                                                style="font-size: 0.8rem;"></i>
+                                                        @endfor
+                                                    </div>
+                                                </div>
+                                                <small
+                                                    class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                                            </div>
+                                            @if ($review->comment)
+                                                <p class="text-muted mb-0">{{ $review->comment }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            @if ($gig->reviews->count() > 5)
+                                <div class="text-center">
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#allReviewsModal">
+                                        Lihat Semua Ulasan
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- Order Card -->
@@ -212,4 +276,52 @@
             </div>
         </div>
     </div>
+
+    {{-- All Reviews Modal --}}
+    @if ($gig->reviews->count() > 5)
+        <div class="modal fade" id="allReviewsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-star me-2"></i>Semua Ulasan ({{ $gig->review_count }})
+                            <span class="ms-2">
+                                <i class="bi bi-star-fill text-warning"></i> {{ $gig->average_rating }}
+                            </span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        @foreach ($gig->reviews()->with('reviewer')->latest()->get() as $review)
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                                        style="width: 40px; height: 40px; font-size: 0.9rem;">
+                                        {{ strtoupper(substr($review->reviewer->name, 0, 1)) }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1">{{ $review->reviewer->name }}</h6>
+                                                <div class="mb-2">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i class="bi bi-star-fill {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"
+                                                            style="font-size: 0.8rem;"></i>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                                        </div>
+                                        @if ($review->comment)
+                                            <p class="text-muted mb-0">{{ $review->comment }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection

@@ -58,6 +58,22 @@ class Seller extends Model
         return $this->hasMany(Gig::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function getAverageRatingAttribute(): ?float
+    {
+        $avg = $this->reviews()->avg('rating');
+        return $avg ? round($avg, 1) : null;
+    }
+
+    public function getTotalReviewsAttribute(): int
+    {
+        return $this->reviews()->count();
+    }
+
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');

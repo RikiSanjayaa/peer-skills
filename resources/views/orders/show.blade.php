@@ -40,7 +40,8 @@
                                     </div>
                                     @if ($order->delivery_days)
                                         <small class="text-muted">
-                                            <i class="bi bi-clock me-1"></i>{{ $order->delivery_days }} Durasi Pengerjaan (Hari)
+                                            <i class="bi bi-clock me-1"></i>{{ $order->delivery_days }} Durasi Pengerjaan
+                                            (Hari)
                                         </small>
                                     @endif
                                 @else
@@ -186,6 +187,130 @@
                     </div>
                 @endif
 
+                <!-- Review Section (Buyer only, after order completed) -->
+                @if ($isBuyer && $order->status === 'completed')
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="bi bi-star me-2"></i>Ulasan</h5>
+                            @if ($order->review)
+                                <button class="btn btn-sm btn-outline-primary" id="editReviewBtn">
+                                    <i class="bi bi-pencil me-1"></i>Edit
+                                </button>
+                            @endif
+                        </div>
+                        <div class="card-body">
+                            @if ($order->review)
+                                {{-- Show existing review --}}
+                                <div id="reviewDisplay">
+                                    <div class="text-center mb-3">
+                                        <div class="mb-2">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star-fill {{ $i <= $order->review->rating ? 'text-warning' : 'text-muted' }}"
+                                                    style="font-size: 1.5rem;"></i>
+                                            @endfor
+                                        </div>
+                                        <p class="text-muted mb-0">Anda memberikan rating {{ $order->review->rating }}/5
+                                        </p>
+                                    </div>
+                                    @if ($order->review->comment)
+                                        <div class="bg-light p-3 rounded">
+                                            <p class="mb-0">{{ $order->review->comment }}</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                {{-- Edit review form (hidden by default) --}}
+                                <div id="reviewEditForm" style="display: none;">
+                                    <form action="{{ route('reviews.update', $order) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="text-center mb-3">
+                                            <p class="text-muted mb-2">Ubah rating Anda</p>
+                                            <div class="star-rating-edit d-flex justify-content-center gap-2">
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <input type="radio" id="editStar{{ $i }}"
+                                                        name="rating" value="{{ $i }}" class="d-none"
+                                                        {{ $order->review->rating == $i ? 'checked' : '' }} required>
+                                                    <label for="editStar{{ $i }}" class="star-label-edit"
+                                                        style="cursor: pointer; font-size: 2rem;">
+                                                        <i
+                                                            class="bi {{ $i <= $order->review->rating ? 'bi-star-fill text-warning' : 'bi-star' }}"></i>
+                                                    </label>
+                                                @endfor
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Komentar (opsional)</label>
+                                            <textarea class="form-control" name="comment" rows="3"
+                                                placeholder="Ceritakan pengalaman Anda dengan penjual ini...">{{ $order->review->comment }}</textarea>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                                <i class="bi bi-check me-1"></i>Simpan Perubahan
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" id="cancelEditBtn">
+                                                Batal
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            @else
+                                {{-- Show review form --}}
+                                <form action="{{ route('reviews.store', $order) }}" method="POST">
+                                    @csrf
+                                    <div class="text-center mb-3">
+                                        <p class="text-muted mb-2">Bagaimana pengalaman Anda?</p>
+                                        <div class="star-rating d-flex justify-content-center gap-2">
+                                            @for ($i = 5; $i >= 1; $i--)
+                                                <input type="radio" id="star{{ $i }}" name="rating"
+                                                    value="{{ $i }}" class="d-none" required>
+                                                <label for="star{{ $i }}" class="star-label"
+                                                    style="cursor: pointer; font-size: 2rem;">
+                                                    <i class="bi bi-star"></i>
+                                                </label>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Komentar (opsional)</label>
+                                        <textarea class="form-control" name="comment" rows="3"
+                                            placeholder="Ceritakan pengalaman Anda dengan penjual ini..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-send me-1"></i>Kirim Ulasan
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Show review if seller viewing completed order with review --}}
+                @if ($isSeller && $order->status === 'completed' && $order->review)
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="bi bi-star me-2"></i>Ulasan dari Pembeli</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="mb-2">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <i class="bi bi-star-fill {{ $i <= $order->review->rating ? 'text-warning' : 'text-muted' }}"
+                                            style="font-size: 1.5rem;"></i>
+                                    @endfor
+                                </div>
+                                <p class="text-muted mb-0">{{ $order->buyer->name }} memberikan rating
+                                    {{ $order->review->rating }}/5</p>
+                            </div>
+                            @if ($order->review->comment)
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-0">{{ $order->review->comment }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Chat Button -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body text-center py-4">
@@ -247,7 +372,8 @@
                             @endif
 
                             @if ($order->canBeDelivered())
-                                <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal" data-bs-target="#deliverModal">
+                                <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal"
+                                    data-bs-target="#deliverModal">
                                     @if ($order->isTutoring())
                                         <i class="bi bi-check-circle me-1"></i>Tandai Sesi Selesai
                                     @else
@@ -386,7 +512,7 @@
         </div>
     </div>
 
-    {{-- Quote Modal (Seller) --}} 
+    {{-- Quote Modal (Seller) --}}
     @if ($isSeller && $order->canBeQuoted())
         <div class="modal fade" id="quoteModal" tabindex="-1">
             <div class="modal-dialog">
@@ -463,7 +589,8 @@
                             <div class="modal-body">
                                 <p>Konfirmasi bahwa sesi bimbingan telah selesai?</p>
                                 <p class="text-muted small">
-                                    Pembeli akan diberi notifikasi dan dapat menandai pesanan selesai atau meminta tindak lanjut.
+                                    Pembeli akan diberi notifikasi dan dapat menandai pesanan selesai atau meminta tindak
+                                    lanjut.
                                 </p>
                             </div>
                             <div class="modal-footer">
@@ -472,7 +599,8 @@
                             </div>
                         </form>
                     @else
-                        <form action="{{ route('orders.deliver', $order) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('orders.deliver', $order) }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="modal-header">
                                 <h5 class="modal-title">Kirim Hasil</h5>
@@ -490,9 +618,10 @@
                                     <div class="form-text">Maksimal 50MB</div>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="is_final" value="1" id="isFinal">
+                                    <input type="checkbox" class="form-check-input" name="is_final" value="1"
+                                        id="isFinal">
                                     <label class="form-check-label" for="isFinal">
-                                        delivery	Ini adalah pengiriman akhir
+                                        delivery Ini adalah pengiriman akhir
                                     </label>
                                 </div>
                             </div>
@@ -554,7 +683,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Pertahankan Pesanan</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Pertahankan
+                                Pesanan</button>
                             <button type="submit" class="btn btn-danger">Batalkan Pesanan</button>
                         </div>
                     </form>
@@ -565,118 +695,236 @@
 
     {{-- Cath Skrip --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const orderId = "{{ $order->id }}";
             const chatBox = document.getElementById('chat-box');
             const chatForm = document.getElementById('chat-form');
             const messageInput = document.getElementById('message-input');
             const currentUserId = {{ auth()->id() }};
 
-            // Fungsi scroll ke bawah otomatis
-            function scrollToBottom() {
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
+            // Only run chat functionality if chat elements exist
+            if (chatBox && chatForm && messageInput) {
+                // Fungsi scroll ke bawah otomatis
+                function scrollToBottom() {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
 
-            function fetchMessages() {
-                fetch(`/orders/${orderId}/chat`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Simpan posisi scroll agar tidak loncat saat user membaca chat lama
-                        const isScrolledToBottom = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 150;
+                function fetchMessages() {
+                    fetch(`/orders/${orderId}/chat`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Simpan posisi scroll agar tidak loncat saat user membaca chat lama
+                            const isScrolledToBottom = chatBox.scrollHeight - chatBox.scrollTop <= chatBox
+                                .clientHeight + 150;
 
-                        chatBox.innerHTML = '';
+                            chatBox.innerHTML = '';
 
-                        if (data.length === 0) {
-                            chatBox.innerHTML = `
-                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                                        <div class="text-center">
-                                            <i class="bi bi-chat-square-text fs-1 opacity-25"></i>
-                                            <p class="small mt-2">Belum ada pesan. Mulai diskusi!</p>
+                            if (data.length === 0) {
+                                chatBox.innerHTML = `
+                                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                            <div class="text-center">
+                                                <i class="bi bi-chat-square-text fs-1 opacity-25"></i>
+                                                <p class="small mt-2">Belum ada pesan. Mulai diskusi!</p>
+                                            </div>
+                                        </div>`;
+                                return;
+                            }
+
+                            data.forEach(msg => {
+                                const isMe = msg.user_id === currentUserId;
+
+                                const alignClass = isMe ? 'align-self-end' : 'align-self-start';
+                                const bubbleColor = isMe ? 'bg-primary text-white' :
+                                    'bg-white text-dark border';
+                                const userLabel = isMe ? 'Anda' : msg.user.name;
+                                const metaAlign = isMe ? 'text-end' : 'text-start';
+
+                                const bubble = `
+                                        <div class="d-flex flex-column ${alignClass}" style="max-width: 80%; min-width: 30%;">
+                                            <div class="d-flex justify-content-between align-items-end mb-1 px-1">
+                                                <small class="fw-bold ${isMe ? 'text-primary' : 'text-dark'}" style="font-size: 0.75rem;">${userLabel}</small>
+                                            </div>
+                                            <div class="p-3 rounded-3 shadow-sm ${bubbleColor}" style="word-wrap: break-word;">
+                                                ${msg.message}
+                                            </div>
+                                            <small class="text-muted mt-1 ${metaAlign}" style="font-size: 0.70rem;">
+                                                ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </small>
                                         </div>
-                                    </div>`;
-                            return;
-                        }
+                                    `;
+                                chatBox.insertAdjacentHTML('beforeend', bubble);
+                            });
 
-                        data.forEach(msg => {
-                            const isMe = msg.user_id === currentUserId;
+                            // Scroll ke bawah hanya jika user sedang di bawah
+                            if (isScrolledToBottom) {
+                                scrollToBottom();
+                            }
+                        })
+                        .catch(error => console.error('Error fetching chat:', error));
+                }
 
-                            const alignClass = isMe ? 'align-self-end' : 'align-self-start';
-                            const bubbleColor = isMe ? 'bg-primary text-white' : 'bg-white text-dark border';
-                            const userLabel = isMe ? 'Anda' : msg.user.name;
-                            const metaAlign = isMe ? 'text-end' : 'text-start';
+                // Load pesan pertama kali
+                fetchMessages();
 
-                            const bubble = `
-                                    <div class="d-flex flex-column ${alignClass}" style="max-width: 80%; min-width: 30%;">
-                                        <div class="d-flex justify-content-between align-items-end mb-1 px-1">
-                                            <small class="fw-bold ${isMe ? 'text-primary' : 'text-dark'}" style="font-size: 0.75rem;">${userLabel}</small>
-                                        </div>
-                                        <div class="p-3 rounded-3 shadow-sm ${bubbleColor}" style="word-wrap: break-word;">
-                                            ${msg.message}
-                                        </div>
-                                        <small class="text-muted mt-1 ${metaAlign}" style="font-size: 0.70rem;">
-                                            ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </small>
-                                    </div>
-                                `;
-                            chatBox.insertAdjacentHTML('beforeend', bubble);
+                // Auto-refresh chat setiap 3 detik
+                setInterval(fetchMessages, 3000);
+
+                // Kirim Pesan
+                chatForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const message = messageInput.value;
+                    if (!message.trim()) return;
+
+                    const oldMessage = messageInput.value;
+                    messageInput.value = '';
+
+                    // Loading state tombol
+                    const btn = chatForm.querySelector('button');
+                    const originalBtnHtml = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                    fetch(`/orders/${orderId}/chat`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                message: message
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Gagal mengirim');
+                            return response.json();
+                        })
+                        .then(() => {
+                            fetchMessages();
+                            setTimeout(scrollToBottom, 300); // Paksa scroll setelah kirim
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Gagal mengirim pesan.');
+                            messageInput.value = oldMessage;
+                        })
+                        .finally(() => {
+                            btn.disabled = false;
+                            btn.innerHTML = originalBtnHtml;
+                            messageInput.focus();
                         });
-
-                        // Scroll ke bawah hanya jika user sedang di bawah
-                        if (isScrolledToBottom) {
-                            scrollToBottom();
-                        }
-                    })
-                    .catch(error => console.error('Error fetching chat:', error));
+                });
             }
 
-            // Load pesan pertama kali
-            fetchMessages();
+            // Star rating functionality for new review form
+            const starLabels = document.querySelectorAll('.star-rating .star-label');
 
-            // Auto-refresh chat setiap 3 detik
-            setInterval(fetchMessages, 3000);
+            if (starLabels.length > 0) {
+                // Reverse the labels order for proper display (5 to 1 becomes 1 to 5 visually)
+                const labelsArray = Array.from(starLabels).reverse();
 
-            // Kirim Pesan
-            chatForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const message = messageInput.value;
-                if (!message.trim()) return;
-
-                const oldMessage = messageInput.value;
-                messageInput.value = '';
-
-                // Loading state tombol
-                const btn = chatForm.querySelector('button');
-                const originalBtnHtml = btn.innerHTML;
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-
-                fetch(`/orders/${orderId}/chat`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ message: message })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Gagal mengirim');
-                        return response.json();
-                    })
-                    .then(() => {
-                        fetchMessages();
-                        setTimeout(scrollToBottom, 300); // Paksa scroll setelah kirim
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Gagal mengirim pesan.');
-                        messageInput.value = oldMessage;
-                    })
-                    .finally(() => {
-                        btn.disabled = false;
-                        btn.innerHTML = originalBtnHtml;
-                        messageInput.focus();
+                labelsArray.forEach((label, index) => {
+                    label.addEventListener('mouseenter', function() {
+                        // Highlight stars up to this one
+                        labelsArray.forEach((l, i) => {
+                            const icon = l.querySelector('i');
+                            if (i <= index) {
+                                icon.classList.remove('bi-star');
+                                icon.classList.add('bi-star-fill', 'text-warning');
+                            } else {
+                                icon.classList.remove('bi-star-fill', 'text-warning');
+                                icon.classList.add('bi-star');
+                            }
+                        });
                     });
-            });
+
+                    label.addEventListener('click', function() {
+                        // Keep the selection
+                        label.previousElementSibling.checked = true;
+                    });
+                });
+
+                document.querySelector('.star-rating')?.addEventListener('mouseleave', function() {
+                    // Reset to selected state
+                    const checked = document.querySelector('.star-rating input[name="rating"]:checked');
+                    const selectedRating = checked ? parseInt(checked.value) : 0;
+
+                    labelsArray.forEach((l, i) => {
+                        const icon = l.querySelector('i');
+                        if (i < selectedRating) {
+                            icon.classList.remove('bi-star');
+                            icon.classList.add('bi-star-fill', 'text-warning');
+                        } else {
+                            icon.classList.remove('bi-star-fill', 'text-warning');
+                            icon.classList.add('bi-star');
+                        }
+                    });
+                });
+            }
+
+            // Edit review functionality
+            const editReviewBtn = document.getElementById('editReviewBtn');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const reviewDisplay = document.getElementById('reviewDisplay');
+            const reviewEditForm = document.getElementById('reviewEditForm');
+
+            if (editReviewBtn && reviewDisplay && reviewEditForm) {
+                editReviewBtn.addEventListener('click', function() {
+                    reviewDisplay.style.display = 'none';
+                    reviewEditForm.style.display = 'block';
+                    editReviewBtn.style.display = 'none';
+                });
+            }
+
+            if (cancelEditBtn && reviewDisplay && reviewEditForm && editReviewBtn) {
+                cancelEditBtn.addEventListener('click', function() {
+                    reviewDisplay.style.display = 'block';
+                    reviewEditForm.style.display = 'none';
+                    editReviewBtn.style.display = 'inline-block';
+                });
+            }
+
+            // Star rating for edit form
+            const editStarLabels = document.querySelectorAll('.star-rating-edit .star-label-edit');
+
+            if (editStarLabels.length > 0) {
+                const editLabelsArray = Array.from(editStarLabels).reverse();
+
+                editLabelsArray.forEach((label, index) => {
+                    label.addEventListener('mouseenter', function() {
+                        editLabelsArray.forEach((l, i) => {
+                            const icon = l.querySelector('i');
+                            if (i <= index) {
+                                icon.classList.remove('bi-star');
+                                icon.classList.add('bi-star-fill', 'text-warning');
+                            } else {
+                                icon.classList.remove('bi-star-fill', 'text-warning');
+                                icon.classList.add('bi-star');
+                            }
+                        });
+                    });
+
+                    label.addEventListener('click', function() {
+                        label.previousElementSibling.checked = true;
+                    });
+                });
+
+                document.querySelector('.star-rating-edit')?.addEventListener('mouseleave', function() {
+                    const checked = document.querySelector(
+                    '.star-rating-edit input[name="rating"]:checked');
+                    const selectedRating = checked ? parseInt(checked.value) : 0;
+
+                    editLabelsArray.forEach((l, i) => {
+                        const icon = l.querySelector('i');
+                        if (i < selectedRating) {
+                            icon.classList.remove('bi-star');
+                            icon.classList.add('bi-star-fill', 'text-warning');
+                        } else {
+                            icon.classList.remove('bi-star-fill', 'text-warning');
+                            icon.classList.add('bi-star');
+                        }
+                    });
+                });
+            }
         });
     </script>
 @endsection
