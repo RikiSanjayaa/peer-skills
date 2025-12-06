@@ -50,6 +50,49 @@ Akses aplikasi di `http://localhost:8000`
 -   Buyer: `buyer@example.com` / `password`
 -   Seller: `seller@example.com` / `password`
 
+## Docker (Alternatif)
+
+Untuk menjalankan dengan Docker dan MySQL:
+
+```bash
+# Clone repository
+git clone https://github.com/RikiSanjayaa/peer-skills.git
+cd peer-skills
+
+# Copy environment file untuk Docker
+cp .env.docker .env
+
+# Generate application key
+php artisan key:generate
+# Atau jika tidak ada PHP lokal, generate key nanti di dalam container
+
+# Build dan jalankan containers
+docker-compose up -d --build
+
+# Tunggu sampai database ready (sekitar 30 detik), lalu:
+docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate --seed
+docker-compose exec app php artisan storage:link
+```
+
+Akses aplikasi di `http://localhost:8000`
+
+**Commands berguna:**
+
+```bash
+# Lihat logs
+docker-compose logs -f
+
+# Masuk ke container app
+docker-compose exec app bash
+
+# Stop containers
+docker-compose down
+
+# Stop dan hapus volumes (reset database)
+docker-compose down -v
+```
+
 ## Struktur Direktori
 
 ```
@@ -150,5 +193,141 @@ Fitur yang direncanakan untuk pengembangan lanjutan:
 
 -   Integrasi payment gateway
 -   Real-time messaging antara buyer dan seller
--   Sistem rating dan review
+-   ~~Sistem rating dan review~~ ✅ Sudah diimplementasi
 -   Notifikasi email dan push notification
+
+## Testing
+
+Proyek ini menggunakan [Pest PHP](https://pestphp.com/) sebagai framework testing. Semua test menggunakan database SQLite in-memory untuk isolasi yang baik.
+
+### Menjalankan Test
+
+```bash
+# Jalankan semua test
+php artisan test
+
+# Jalankan test dengan output verbose
+php artisan test --verbose
+
+# Jalankan test secara parallel (lebih cepat)
+php artisan test --parallel
+
+# Jalankan test dari file tertentu
+php artisan test --filter=OrderTest
+php artisan test --filter=ReviewTest
+php artisan test --filter=GigCrudTest
+
+# Jalankan test untuk grup tertentu
+php artisan test tests/Feature
+php artisan test tests/Unit
+```
+
+### Struktur Test
+
+```
+tests/
+├── Pest.php              # Konfigurasi Pest dan helper functions
+├── TestCase.php          # Base test case dengan PHPDoc
+├── _ide_helper.php       # IDE helper untuk autocompletion
+├── Feature/              # Test fitur end-to-end
+│   ├── AuthTest.php      # Login, register, logout
+│   ├── GigViewTest.php   # Halaman publik gig
+│   ├── GigCrudTest.php   # Create, update, delete gig
+│   ├── OrderTest.php     # Alur order lengkap
+│   ├── ReviewTest.php    # Sistem rating dan review
+│   ├── SellerTest.php    # Registrasi dan dashboard seller
+│   ├── ProfileTest.php   # Profil pengguna
+│   └── AdminTest.php     # Fitur admin
+└── Unit/                 # Test unit untuk model
+    ├── UserSellerModelTest.php
+    ├── GigCategoryModelTest.php
+    └── OrderReviewModelTest.php
+```
+
+### Helper Functions
+
+Di `tests/Pest.php` tersedia helper functions untuk membuat data test:
+
+```php
+// Membuat user biasa
+$user = createUser();
+$user = createUser(['name' => 'Custom Name']);
+
+// Membuat buyer (sama dengan createUser)
+$buyer = createBuyer();
+
+// Membuat seller dengan user
+$seller = createSeller();
+$seller->user;  // User yang terkait
+
+// Membuat gig dengan seller
+$gig = createGig();
+$gig = createGig(['price' => 500000]);
+
+// Membuat order
+$order = createOrder();
+$order = createOrder(['status' => 'completed']);
+
+// Membuat kategori
+$category = createCategory();
+
+// Membuat admin
+$admin = createAdmin();
+```
+
+### Menulis Test Baru
+
+Contoh test baru menggunakan Pest:
+
+```php
+<?php
+
+/**
+ * @mixin \Tests\TestCase
+ * @mixin \Illuminate\Foundation\Testing\TestCase
+ */
+
+use App\Models\Gig;
+
+/** @var \Tests\TestCase $this */
+
+describe('Nama Fitur', function () {
+    it('deskripsi test', function () {
+        $user = createUser();
+        $gig = createGig();
+
+        $response = $this->actingAs($user)->get('/gigs/' . $gig->id);
+
+        $response->assertStatus(200);
+        $response->assertSee($gig->title);
+    });
+
+    it('harus login untuk mengakses', function () {
+        $response = $this->get('/gigs/create');
+
+        $response->assertRedirect('/login');
+    });
+});
+```
+
+### Pre-Commit Testing
+
+Disarankan untuk menjalankan test sebelum setiap commit:
+
+```bash
+# Jalankan test singkat sebelum commit
+php artisan test --parallel
+
+# Atau buat alias di .bashrc/.zshrc
+alias pt="php artisan test --parallel"
+```
+
+### Coverage Report (Opsional)
+
+```bash
+# Install PCOV atau Xdebug terlebih dahulu
+php artisan test --coverage
+
+# Dengan minimum coverage
+php artisan test --coverage --min=80
+```
