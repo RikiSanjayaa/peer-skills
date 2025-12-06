@@ -57,9 +57,14 @@
 
             <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center text-warning small gap-1">
-                    <i class="bi bi-star-fill"></i>
-                    {{-- TODO: tambah rating beneran --}}
-                    <span class="fw-bold text-dark">5.0</span>
+                    @if ($gig->review_count > 0)
+                        <i class="bi bi-star-fill"></i>
+                        <span class="fw-bold text-dark">{{ $gig->average_rating }}</span>
+                        <span class="text-muted">({{ $gig->review_count }})</span>
+                    @else
+                        <i class="bi bi-star text-muted"></i>
+                        <span class="text-muted">Belum ada ulasan</span>
+                    @endif
                 </div>
                 <span class="price-badge">
                     Mulai Rp {{ number_format($gig->min_price, 0, ',', '.') }}

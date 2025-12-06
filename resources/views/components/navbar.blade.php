@@ -47,7 +47,7 @@
                             </li>
                         @endif
                     @endif
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown z-50">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                             data-bs-toggle="dropdown">
                             @if (Auth::user()->avatar)

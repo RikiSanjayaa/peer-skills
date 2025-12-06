@@ -4,6 +4,7 @@ use App\Http\Controllers\GigController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\ReviewController;
 use App\Models\Gig;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
@@ -43,6 +44,10 @@ Route::middleware(['auth', 'no-admin'])->group(function () {
 
     // Both can do
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+    // Reviews
+    Route::post('/orders/{order}/review', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/orders/{order}/review', [ReviewController::class, 'update'])->name('reviews.update');
 });
 
 // Gig routes - Public viewing, but create/edit/delete BLOCKED FOR ADMIN
@@ -85,7 +90,6 @@ Route::middleware('auth')->group(function () {
     // Route Chat
     Route::get('/orders/{order}/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::post('/orders/{order}/chat', [ChatController::class, 'store'])->name('chat.store');
-
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

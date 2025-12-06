@@ -195,6 +195,12 @@
                     <span><i class="bi bi-basket"></i> {{ $orderCount }} pesanan selesai</span>
                     @if ($user->is_seller)
                         <span><i class="bi bi-grid"></i> {{ $user->seller->gigs->count() }} Layanan</span>
+                        @if ($user->seller->total_reviews > 0)
+                            <span>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                {{ $user->seller->average_rating }} ({{ $user->seller->total_reviews }} ulasan)
+                            </span>
+                        @endif
                     @endif
                 </div>
 
@@ -337,10 +343,127 @@
                         <p class="text-muted">Penjual ini belum membuat layanan apapun.</p>
                     </div>
                 @endif
+
+                {{-- Reviews Section for Seller --}}
+                @if ($user->is_seller && $user->seller && $user->seller->total_reviews > 0)
+                    <div class="mt-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-semibold mb-0">
+                                <i class="bi bi-star me-2"></i>Ulasan ({{ $user->seller->total_reviews }})
+                            </h4>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-star-fill text-warning me-1"></i>
+                                <span class="fw-bold">{{ $user->seller->average_rating }}</span>
+                            </div>
+                        </div>
+
+                        <div class="card premium-card">
+                            <div class="card-body">
+                                @foreach ($user->seller->reviews()->with(['reviewer', 'gig'])->latest()->take(5)->get() as $review)
+                                    <div class="border-bottom pb-3 mb-3">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 40px; height: 40px; font-size: 0.9rem;">
+                                                {{ strtoupper(substr($review->reviewer->name, 0, 1)) }}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h6 class="mb-1">{{ $review->reviewer->name }}</h6>
+                                                        <div class="mb-1">
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                <i class="bi bi-star-fill {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"
+                                                                    style="font-size: 0.8rem;"></i>
+                                                            @endfor
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            <a href="{{ route('gigs.show', $review->gig) }}"
+                                                                class="text-decoration-none">
+                                                                {{ Str::limit($review->gig->title, 30) }}
+                                                            </a>
+                                                        </small>
+                                                    </div>
+                                                    <small
+                                                        class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                                                </div>
+                                                @if ($review->comment)
+                                                    <p class="text-muted mb-0 mt-2">{{ $review->comment }}</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                                @if ($user->seller->total_reviews > 5)
+                                    <div class="text-center">
+                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#allSellerReviewsModal">
+                                            Lihat Semua Ulasan
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
 
         </div>
 
     </div>
+
+    {{-- All Seller Reviews Modal --}}
+    @if ($user->is_seller && $user->seller && $user->seller->total_reviews > 5)
+        <div class="modal fade" id="allSellerReviewsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-star me-2"></i>Semua Ulasan ({{ $user->seller->total_reviews }})
+                            <span class="ms-2">
+                                <i class="bi bi-star-fill text-warning"></i> {{ $user->seller->average_rating }}
+                            </span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        @foreach ($user->seller->reviews()->with(['reviewer', 'gig'])->latest()->get() as $review)
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                                        style="width: 40px; height: 40px; font-size: 0.9rem;">
+                                        {{ strtoupper(substr($review->reviewer->name, 0, 1)) }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1">{{ $review->reviewer->name }}</h6>
+                                                <div class="mb-1">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i class="bi bi-star-fill {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"
+                                                            style="font-size: 0.8rem;"></i>
+                                                    @endfor
+                                                </div>
+                                                <small class="text-muted">
+                                                    <a href="{{ route('gigs.show', $review->gig) }}"
+                                                        class="text-decoration-none">
+                                                        {{ Str::limit($review->gig->title, 30) }}
+                                                    </a>
+                                                </small>
+                                            </div>
+                                            <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                                        </div>
+                                        @if ($review->comment)
+                                            <p class="text-muted mb-0 mt-2">{{ $review->comment }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
 @endsection
