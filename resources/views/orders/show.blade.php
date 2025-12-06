@@ -332,180 +332,186 @@
 
             <!-- Sidebar -->
             <div class="col-lg-4">
-                <!-- Other Party Info -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">{{ $isBuyer ? 'Seller' : 'Buyer' }}</h5>
+                <div class="sticky-top" style="top: 100px; z-index: 100;">
+                    <!-- Other Party Info -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">{{ $isBuyer ? 'Seller' : 'Buyer' }}</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <a href="{{ route('profile.show', $otherParty) }}">
+                                @if ($otherParty->avatar)
+                                    <img src="{{ $otherParty->avatar_url }}" alt="{{ $otherParty->name }}"
+                                        class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                @else
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                                        style="width: 80px; height: 80px; font-size: 1.5rem;">
+                                        {{ $otherParty->initials }}
+                                    </div>
+                                @endif
+                            </a>
+                            <h6 class="mb-1">{{ $otherParty->name }}</h6>
+                            @if (!$isBuyer && $otherParty->seller)
+                                <small class="text-muted">{{ $otherParty->seller->business_name }}</small>
+                            @endif
+                        </div>
                     </div>
-                    <div class="card-body text-center">
-                        <a href="{{ route('profile.show', $otherParty) }}">
-                            @if ($otherParty->avatar)
-                                <img src="{{ $otherParty->avatar_url }}" alt="{{ $otherParty->name }}"
-                                    class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+
+                    <!-- Action Buttons -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Tindakan</h5>
+                        </div>
+                        <div class="card-body">
+                            @if ($isSeller)
+                                {{-- Seller Actions --}}
+                                @if ($order->canBeQuoted())
+                                    <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal"
+                                        data-bs-target="#quoteModal">
+                                        <i class="bi bi-currency-dollar me-1"></i>Kirim Penawaran Harga
+                                    </button>
+                                @endif
+
+                                @if ($order->canBeDelivered())
+                                    <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal"
+                                        data-bs-target="#deliverModal">
+                                        @if ($order->isTutoring())
+                                            <i class="bi bi-check-circle me-1"></i>Tandai Sesi Selesai
+                                        @else
+                                            <i class="bi bi-box-seam me-1"></i>Kirim Hasil
+                                        @endif
+                                    </button>
+                                @endif
                             @else
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
-                                    style="width: 80px; height: 80px; font-size: 1.5rem;">
-                                    {{ $otherParty->initials }}
-                                </div>
-                            @endif
-                        </a>
-                        <h6 class="mb-1">{{ $otherParty->name }}</h6>
-                        @if (!$isBuyer && $otherParty->seller)
-                            <small class="text-muted">{{ $otherParty->seller->business_name }}</small>
-                        @endif
-                    </div>
-                </div>
+                                {{-- Buyer Actions --}}
+                                @if ($order->canBeAccepted())
+                                    <form action="{{ route('orders.accept', $order) }}" method="POST" class="mb-2">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success w-100">
+                                            <i class="bi bi-check-lg me-1"></i>Terima Penawaran Harga
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('orders.decline', $order) }}" method="POST" class="mb-2">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-danger w-100">
+                                            <i class="bi bi-x-lg me-1"></i>Tolak Penawaran Harga
+                                        </button>
+                                    </form>
+                                @endif
 
-                <!-- Action Buttons -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Tindakan</h5>
-                    </div>
-                    <div class="card-body">
-                        @if ($isSeller)
-                            {{-- Seller Actions --}}
-                            @if ($order->canBeQuoted())
-                                <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#quoteModal">
-                                    <i class="bi bi-currency-dollar me-1"></i>Kirim Penawaran Harga
+                                @if ($order->canRequestRevision())
+                                    <button class="btn btn-warning w-100 mb-2" data-bs-toggle="modal"
+                                        data-bs-target="#revisionModal">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Minta Revisi
+                                    </button>
+                                @endif
+
+                                @if ($order->canBeCompleted())
+                                    <form action="{{ route('orders.complete', $order) }}" method="POST" class="mb-2">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success w-100">
+                                            <i class="bi bi-check-circle me-1"></i>Tandai Selesai
+                                        </button>
+                                    </form>
+                                @endif
+                            @endif
+
+                            {{-- Cancel (both) --}}
+                            @if ($order->canBeCancelled())
+                                <button class="btn btn-outline-danger w-100" data-bs-toggle="modal"
+                                    data-bs-target="#cancelModal">
+                                    <i class="bi bi-x-circle me-1"></i>Batalkan Pesanan
                                 </button>
                             @endif
 
-                            @if ($order->canBeDelivered())
-                                <button class="btn btn-success w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#deliverModal">
-                                    @if ($order->isTutoring())
-                                        <i class="bi bi-check-circle me-1"></i>Tandai Sesi Selesai
-                                    @else
-                                        <i class="bi bi-box-seam me-1"></i>Kirim Hasil
-                                    @endif
-                                </button>
-                            @endif
-                        @else
-                            {{-- Buyer Actions --}}
-                            @if ($order->canBeAccepted())
-                                <form action="{{ route('orders.accept', $order) }}" method="POST" class="mb-2">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success w-100">
-                                        <i class="bi bi-check-lg me-1"></i>Terima Penawaran Harga
-                                    </button>
-                                </form>
-                                <form action="{{ route('orders.decline', $order) }}" method="POST" class="mb-2">
-                                    @csrf
-                                    <button type="submit" class="btn btn-outline-danger w-100">
-                                        <i class="bi bi-x-lg me-1"></i>Tolak Penawaran Harga
-                                    </button>
-                                </form>
-                            @endif
-
-                            @if ($order->canRequestRevision())
-                                <button class="btn btn-warning w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#revisionModal">
-                                    <i class="bi bi-arrow-repeat me-1"></i>Minta Revisi
-                                </button>
-                            @endif
-
-                            @if ($order->canBeCompleted())
-                                <form action="{{ route('orders.complete', $order) }}" method="POST" class="mb-2">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success w-100">
-                                        <i class="bi bi-check-circle me-1"></i>Tandai Selesai
-                                    </button>
-                                </form>
-                            @endif
-                        @endif
-
-                        {{-- Cancel (both) --}}
-                        @if ($order->canBeCancelled())
-                            <button class="btn btn-outline-danger w-100" data-bs-toggle="modal"
-                                data-bs-target="#cancelModal">
-                                <i class="bi bi-x-circle me-1"></i>Batalkan Pesanan
-                            </button>
-                        @endif
-
-                        {{-- Back to orders --}}
-                        <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary w-100 mt-3">
-                            <i class="bi bi-arrow-left me-1"></i>Kembali ke Pesanan
-                        </a>
+                            {{-- Back to orders --}}
+                            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary w-100 mt-3">
+                                <i class="bi bi-arrow-left me-1"></i>Kembali ke Pesanan
+                            </a>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Order Timeline -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Riwayat Pesanan</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-3">
-                                <div class="d-flex">
-                                    <div class="me-3">
-                                        <span class="badge rounded-pill bg-success"><i class="bi bi-check"></i></span>
-                                    </div>
-                                    <div>
-                                        <strong>Pesanan Dibuat</strong>
-                                        <br><small
-                                            class="text-muted">{{ $order->created_at->format('M j, Y g:i A') }}</small>
-                                    </div>
-                                </div>
-                            </li>
-                            @if ($order->quoted_at)
+                    <!-- Order Timeline -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Riwayat Pesanan</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
                                 <li class="mb-3">
                                     <div class="d-flex">
                                         <div class="me-3">
                                             <span class="badge rounded-pill bg-success"><i class="bi bi-check"></i></span>
                                         </div>
                                         <div>
-                                            <strong>Penawaran Harga Dikirim</strong>
+                                            <strong>Pesanan Dibuat</strong>
                                             <br><small
-                                                class="text-muted">{{ $order->quoted_at->format('M j, Y g:i A') }}</small>
+                                                class="text-muted">{{ $order->created_at->format('M j, Y g:i A') }}</small>
                                         </div>
                                     </div>
                                 </li>
-                            @endif
-                            @if ($order->accepted_at)
-                                <li class="mb-3">
-                                    <div class="d-flex">
-                                        <div class="me-3">
-                                            <span class="badge rounded-pill bg-success"><i class="bi bi-check"></i></span>
+                                @if ($order->quoted_at)
+                                    <li class="mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <span class="badge rounded-pill bg-success"><i
+                                                        class="bi bi-check"></i></span>
+                                            </div>
+                                            <div>
+                                                <strong>Penawaran Harga Dikirim</strong>
+                                                <br><small
+                                                    class="text-muted">{{ $order->quoted_at->format('M j, Y g:i A') }}</small>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <strong>Penawaran Harga Diterima</strong>
-                                            <br><small
-                                                class="text-muted">{{ $order->accepted_at->format('M j, Y g:i A') }}</small>
+                                    </li>
+                                @endif
+                                @if ($order->accepted_at)
+                                    <li class="mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <span class="badge rounded-pill bg-success"><i
+                                                        class="bi bi-check"></i></span>
+                                            </div>
+                                            <div>
+                                                <strong>Penawaran Harga Diterima</strong>
+                                                <br><small
+                                                    class="text-muted">{{ $order->accepted_at->format('M j, Y g:i A') }}</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            @endif
-                            @if ($order->delivered_at)
-                                <li class="mb-3">
-                                    <div class="d-flex">
-                                        <div class="me-3">
-                                            <span class="badge rounded-pill bg-success"><i class="bi bi-check"></i></span>
+                                    </li>
+                                @endif
+                                @if ($order->delivered_at)
+                                    <li class="mb-3">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <span class="badge rounded-pill bg-success"><i
+                                                        class="bi bi-check"></i></span>
+                                            </div>
+                                            <div>
+                                                <strong>Telah Dikirim</strong>
+                                                <br><small
+                                                    class="text-muted">{{ $order->delivered_at->format('M j, Y g:i A') }}</small>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <strong>Telah Dikirim</strong>
-                                            <br><small
-                                                class="text-muted">{{ $order->delivered_at->format('M j, Y g:i A') }}</small>
+                                    </li>
+                                @endif
+                                @if ($order->completed_at)
+                                    <li class="mb-0">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <span class="badge rounded-pill bg-success"><i
+                                                        class="bi bi-check"></i></span>
+                                            </div>
+                                            <div>
+                                                <strong>Selesai</strong>
+                                                <br><small
+                                                    class="text-muted">{{ $order->completed_at->format('M j, Y g:i A') }}</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            @endif
-                            @if ($order->completed_at)
-                                <li class="mb-0">
-                                    <div class="d-flex">
-                                        <div class="me-3">
-                                            <span class="badge rounded-pill bg-success"><i class="bi bi-check"></i></span>
-                                        </div>
-                                        <div>
-                                            <strong>Selesai</strong>
-                                            <br><small
-                                                class="text-muted">{{ $order->completed_at->format('M j, Y g:i A') }}</small>
-                                        </div>
-                                    </div>
-                                </li>
-                            @endif
-                        </ul>
+                                    </li>
+                                @endif
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -910,7 +916,7 @@
 
                 document.querySelector('.star-rating-edit')?.addEventListener('mouseleave', function() {
                     const checked = document.querySelector(
-                    '.star-rating-edit input[name="rating"]:checked');
+                        '.star-rating-edit input[name="rating"]:checked');
                     const selectedRating = checked ? parseInt(checked.value) : 0;
 
                     editLabelsArray.forEach((l, i) => {

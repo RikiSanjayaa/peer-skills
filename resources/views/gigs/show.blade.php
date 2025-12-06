@@ -212,7 +212,7 @@
 
             <!-- Order Card -->
             <div class="col-lg-4">
-                <div class="card sticky-top" style="top: 100px;">
+                <div class="card sticky-top" style="top: 100px; z-index: 100;">
                     <div class="card-body">
                         <div class="mb-3">
                             <h4 class="mb-2">
