@@ -50,6 +50,49 @@ Akses aplikasi di `http://localhost:8000`
 -   Buyer: `buyer@example.com` / `password`
 -   Seller: `seller@example.com` / `password`
 
+## Docker (Alternatif)
+
+Untuk menjalankan dengan Docker dan MySQL:
+
+```bash
+# Clone repository
+git clone https://github.com/RikiSanjayaa/peer-skills.git
+cd peer-skills
+
+# Copy environment file untuk Docker
+cp .env.docker .env
+
+# Generate application key
+php artisan key:generate
+# Atau jika tidak ada PHP lokal, generate key nanti di dalam container
+
+# Build dan jalankan containers
+docker-compose up -d --build
+
+# Tunggu sampai database ready (sekitar 30 detik), lalu:
+docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate --seed
+docker-compose exec app php artisan storage:link
+```
+
+Akses aplikasi di `http://localhost:8000`
+
+**Commands berguna:**
+
+```bash
+# Lihat logs
+docker-compose logs -f
+
+# Masuk ke container app
+docker-compose exec app bash
+
+# Stop containers
+docker-compose down
+
+# Stop dan hapus volumes (reset database)
+docker-compose down -v
+```
+
 ## Struktur Direktori
 
 ```
