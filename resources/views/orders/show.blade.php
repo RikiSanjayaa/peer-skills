@@ -311,20 +311,37 @@
                     </div>
                 @endif
 
-                <!-- Chat Button -->
+                <!-- Chat Section -->
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body text-center py-4">
-                        <i class="bi bi-chat-dots display-6 text-muted mb-3 d-block"></i>
-                        <h5 class="mb-2">Perlu mendiskusikan sesuatu?</h5>
-                        <p class="text-muted small mb-3">
-                            Obrolan langsung dengan {{ $isBuyer ? 'the seller' : 'the buyer' }} mengenai pesanan ini
-                        </p>
-                        <button class="btn btn-outline-primary" disabled>
-                            <i class="bi bi-chat-left-text me-2"></i>
-                            Obrolan dengan {{ $isBuyer ? 'Seller' : 'Buyer' }} (Segera Hadir)
-                        </button>
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Diskusi Pesanan</h5>
+                        <small class="text-muted">dengan {{ $isBuyer ? $otherParty->name : $otherParty->name }}</small>
                     </div>
+                    <div class="card-body p-0">
+                        <!-- Chat Messages Container -->
+                        <div id="chat-box" class="p-3 d-flex flex-column gap-3"
+                            style="height: 700px; overflow-y: auto; background-color: #f8f9fa;">
+                            <!-- Messages will be loaded here via JavaScript -->
+                            <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                <div class="text-center">
+                                    <i class="bi bi-chat-square-text fs-1 opacity-25"></i>
+                                    <p class="small mt-2">Memuat pesan...</p>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Chat Input Form -->
+                        <div class="border-top p-3 bg-white">
+                            <form id="chat-form" class="d-flex gap-2">
+                                @csrf
+                                <input type="text" id="message-input" class="form-control"
+                                    placeholder="Ketik pesan..." autocomplete="off" maxlength="1000" required>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-4">
                 </div>
@@ -707,21 +724,118 @@
             const chatForm = document.getElementById('chat-form');
             const messageInput = document.getElementById('message-input');
             const currentUserId = {{ auth()->id() }};
+            const otherPartyName = "{{ $otherParty->name }}";
+
+            // Track last message ID to detect new messages
+            let lastMessageId = 0;
+            let notificationsEnabled = false;
+            let isFirstLoad = true;
+
+            // Create audio context for notification sound
+            let audioContext = null;
+
+            function playNotificationSound() {
+                try {
+                    if (!audioContext) {
+                        audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                    }
+
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                } catch (e) {
+                    console.log('Could not play notification sound:', e);
+                }
+            }
+
+            // Request notification permission
+            function requestNotificationPermission() {
+                if (!('Notification' in window)) {
+                    console.log('Browser tidak mendukung notifikasi');
+                    return;
+                }
+
+                if (Notification.permission === 'granted') {
+                    notificationsEnabled = true;
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        notificationsEnabled = permission === 'granted';
+                    });
+                }
+            }
+
+            // Show notification for new message (when tab not focused)
+            function showNotification(message, senderName) {
+                if (!notificationsEnabled) return;
+
+                const notification = new Notification(`Pesan baru dari ${senderName}`, {
+                    body: message.length > 100 ? message.substring(0, 100) + '...' : message,
+                    icon: '/images/logo.png',
+                    tag: `order-${orderId}`,
+                    requireInteraction: false
+                });
+
+                // Click notification to focus the tab
+                notification.onclick = function() {
+                    window.focus();
+                    notification.close();
+                };
+
+                // Auto close after 5 seconds
+                setTimeout(() => notification.close(), 5000);
+            }
+
+            // Request permission on page load
+            requestNotificationPermission();
 
             // Only run chat functionality if chat elements exist
             if (chatBox && chatForm && messageInput) {
                 // Fungsi scroll ke bawah otomatis
                 function scrollToBottom() {
-                    chatBox.scrollTop = chatBox.scrollHeight;
+                    setTimeout(() => {
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 50);
                 }
 
                 function fetchMessages() {
                     fetch(`/orders/${orderId}/chat`)
                         .then(response => response.json())
                         .then(data => {
-                            // Simpan posisi scroll agar tidak loncat saat user membaca chat lama
+                            // Check if user is scrolled near bottom before updating
                             const isScrolledToBottom = chatBox.scrollHeight - chatBox.scrollTop <= chatBox
                                 .clientHeight + 150;
+
+                            // Check for new messages from other user
+                            let hasNewMessageFromOther = false;
+                            if (data.length > 0) {
+                                const latestMessage = data[data.length - 1];
+                                if (latestMessage.id > lastMessageId && lastMessageId !== 0) {
+                                    // New message from other party
+                                    if (latestMessage.user_id !== currentUserId) {
+                                        hasNewMessageFromOther = true;
+
+                                        // Play sound (works when tab is focused)
+                                        playNotificationSound();
+
+                                        // Show browser notification (works when tab is NOT focused)
+                                        if (!document.hasFocus()) {
+                                            showNotification(latestMessage.message, latestMessage.user.name);
+                                        }
+                                    }
+                                }
+                                lastMessageId = latestMessage.id;
+                            }
 
                             chatBox.innerHTML = '';
 
@@ -733,6 +847,7 @@
                                                 <p class="small mt-2">Belum ada pesan. Mulai diskusi!</p>
                                             </div>
                                         </div>`;
+                                isFirstLoad = false;
                                 return;
                             }
 
@@ -761,10 +876,11 @@
                                 chatBox.insertAdjacentHTML('beforeend', bubble);
                             });
 
-                            // Scroll ke bawah hanya jika user sedang di bawah
-                            if (isScrolledToBottom) {
+                            // Scroll to bottom on first load, new message from other, or if already at bottom
+                            if (isFirstLoad || hasNewMessageFromOther || isScrolledToBottom) {
                                 scrollToBottom();
                             }
+                            isFirstLoad = false;
                         })
                         .catch(error => console.error('Error fetching chat:', error));
                 }
