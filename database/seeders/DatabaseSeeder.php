@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             GigSeeder::class,
             OrderSeeder::class,
             ReviewSeeder::class,
+            ChatMessageSeeder::class,
         ]);
     }
 }
